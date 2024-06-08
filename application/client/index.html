@@ -43,10 +43,6 @@
         <br>
         A: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.a">
         A Value: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.aval">
-        B: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="abstore.b">
-        B Value: <input class="form-control" type="text" placeholder="Ex: 0" ng-model="abstore.bval">
-        C: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="abstore.c">
-        C Value: <input class="form-control" type="text" placeholder="Ex: 0" ng-model="abstore.cval">
         <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
       </div>
       <hr>
@@ -55,6 +51,13 @@
         <label>Query</label>
         <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
         <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
+      </div>
+      <hr>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_delete">{{delete_ab}}</h5>
+        <label>Delete User</label>
+        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
+        <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
       </div>
     </div>
   </body>
