@@ -47,15 +47,32 @@
       </div>
       <hr>
       <div class="form-group">
+        <label>Invoke</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_invoke">{{invoke_ab}}</h5>
+        <br>
+        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="invoke.sender">
+        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="invoke.receiver">
+        Amount: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="invoke.amount">
+        <input id="invokeAB" type="submit" value="Send" class="btn btn-primary" ng-click="invokeAB()">
+      </div>
+      <hr>
+      <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
-        <label>Query</label>
+        <label>User</label>
         <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
         <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
       </div>
       <hr>
+      <hr>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
+        <label>Admin</label>
+        <p><input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAdmin()"></p>
+      </div>
+      <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_delete">{{delete_ab}}</h5>
-        <label>Delete User</label>
+        <label>Delete</label>
         <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
         <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
       </div>
