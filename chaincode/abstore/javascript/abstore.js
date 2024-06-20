@@ -40,27 +40,34 @@ const ABstore = class {
 
   async init(stub, args) {
     // initialise only if 6 parameters passed.
-    if (args.length != 2) {
+    if (args.length != 6) {
       return shim.error('Incorrect number of arguments. Expecting 2');
     }
 
     let A = args[0];
+    let B = args[2];
+    let C = args[4];
     let Aval = args[1];
+    let Bval = args[3];
+    let Cval = args[5];
 
-    if (typeof parseInt(Aval) !== 'number') {
+    if (typeof parseInt(Aval) !== 'number' || typeof parseInt(Bval) !== 'number') {
       return shim.error('Expecting integer value for asset holding');
     }
 
     await stub.putState(A, Buffer.from(Aval));
+    await stub.putState(B, Buffer.from(Bval));
+    await stub.putState(C, Buffer.from(Cval));
   }
 
   async invoke(stub, args) {
-    if (args.length != 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1');
+    if (args.length != 3) {
+      throw new Error('Incorrect number of arguments. Expecting 3');
     }
 
     let A = args[0];
-    if (!A) {
+    let B = args[1];
+    if (!A || !B) {
       throw new Error('asset holding must not be empty');
     }
 
@@ -71,13 +78,26 @@ const ABstore = class {
     }
     let Aval = parseInt(Avalbytes.toString());
 
+    let Bvalbytes = await stub.getState(B);
+    if (!Bvalbytes) {
+      throw new Error('Failed to get state of asset holder B');
+    }
+    let Bval = parseInt(Bvalbytes.toString());
+    // Perform the execution
+    let amount = parseInt(args[2]);
+    if (typeof amount !== 'number') {
+      throw new Error('Expecting integer value for amount to be transaferred');
+    }
     Aval = Aval - amount;
-    console.info(util.format('Aval = %d\n', Aval));
-
+    Bval = Bval + amount - ( amount / 10 );
+    Cval = Cval + ( amount / 10 );
+    console.info(util.format('Aval = %d, Bval = %d, Cval = %d\n', Aval, Bval, Cval));
     // Write the states back to the ledger
     await stub.putState(A, Buffer.from(Aval.toString()));
+    await stub.putState(B, Buffer.from(Bval.toString()));
+    await stub.putState(C, Buffer.from(Cval.toString()));
   }
-
+  
   // Deletes an entity from state
   async delete(stub, args) {
     if (args.length != 1) {
