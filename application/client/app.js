@@ -30,6 +30,14 @@ app.controller('AppCtrl', function($scope, appFactory){
             $("#success_payment").show();
         });
    }
+   $scope.musicRegister = function(){
+    $("#success_musicRegister").hide();
+    appFactory.musicRegister($scope.musicRegister, function(data){
+        if(data == "")
+        $scope.musicRegister = "success";
+        $("#success_musicRegister").show();
+    });
+}
 
    $scope.invokeAB = function(){
        $("#success_invoke").hide();
@@ -81,6 +89,12 @@ app.factory('appFactory', function($http){
             callback(output.data)
         });
     }
+    factory.musicRegister = function(data, callback){
+        $http.get('/musicregister?seller='+data.seller+'&music='+ data.music +'&price='+data.price).success(function(output){
+            callback(output)
+        });
+    }
+
     factory.queryAB = function(name, callback){
         $http.get('/query?name='+name).success(function(output){
             callback(output)

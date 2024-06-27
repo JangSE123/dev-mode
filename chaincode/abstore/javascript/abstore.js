@@ -76,16 +76,17 @@ const ABstore = class {
   }
 
   async payment(stub, args) {
-    if(args.length != 3){
+    if (args.length != 3) {
       throw new Error('Incorrect number of arguments. Expecting 3');
     }
 
     let buyer = args[0];
-    let seller =args[1];
+    let seller = args[1];
     let amount = parseInt(args[2]);
-    let admin = 'admin';
+    let adminCash = 'admin_cash';
+    let adminPoint = 'admin_point';
 
-    if ( !buyer || !seller || isNaN(amount)) {
+    if (!buyer || !seller || isNaN(amount)) {
       throw new Error('Invalid arguments. Expecting buyer, seller, and amount');
     }
 
@@ -105,58 +106,132 @@ const ABstore = class {
     }
 
     let sellerCash = parseInt(sellerCashBytes.toString());
-    let sellerPoint = parseInt(sellerCashBytes.toString());
+    let sellerPoint = parseInt(sellerPointBytes.toString());
 
-    let adminCashBytes = await stub.getState(admin + "_cash");
-    let adminPointBytes = await stub.getState(admin + "_point");
+    let adminCashBytes = await stub.getState(adminCash);
+    let adminPointBytes = await stub.getState(adminPoint);
     if (!adminCashBytes || adminCashBytes.length === 0 || !adminPointBytes || adminPointBytes.length === 0) {
       throw new Error('Failed to get state of admin');
     }
-    let adminCash = parseInt(adminCashBytes.toString());
-    let adminPoint = parseInt(adminPointBytes.toString());
+    let adminCashVal = parseInt(adminCashBytes.toString());
+    let adminPointVal = parseInt(adminPointBytes.toString());
 
-    //구매자가 포인트가 가격보다 비싸면 포인트로만 결제하고, 그게 아니면 가격에서 포인트를 빼는 로직
+    // Purchase using points first, then cash if necessary
     let remainAmount = amount;
 
-    if ( buyerPoint >= remainAmount) {
-      buyerPoint  -= remainAmount;
+    if (buyerPoint >= remainAmount) {
+      buyerPoint -= remainAmount;
       remainAmount = 0;
-    }else {
+    } else {
       remainAmount -= buyerPoint;
       buyerPoint = 0;
     }
 
-    //포인트 제외한 잔액 결제처리, 캐시로 결제한 금액 5% point로 적립
-    let promotionPoint = 0; 
-    if( remainAmount > 0) {
-      if( buyerCash >= remainAmount ){
+    // Remaining amount is paid in cash, and 5% of cash payment is added as points
+    let promotionPoint = 0;
+    if (remainAmount > 0) {
+      if (buyerCash >= remainAmount) {
         buyerCash -= remainAmount;
-        adminCash += remainAmount;
+        adminCashVal += remainAmount;
 
         promotionPoint = Math.floor(remainAmount * 0.05);
+        buyerPoint += promotionPoint;
         remainAmount = 0;
       } else {
-        throw new Error(user + 'Not Enough Money');
+        throw new Error(buyer + ' does not have enough cash');
       }
     }
 
+    // Deduct tax from amount and transfer the remaining to the seller
     let tax = Math.floor(amount * 0.1);
     let totalPrice = amount - tax;
-    
-    adminCash -= totalPrice;
+
+    adminCashVal -= totalPrice;
     sellerCash += totalPrice;
-    
-    console.info(util.format('Buyer Cash = %d, Buyer Points = %d, Seller Cash = %d, Admin Cash = %d, Admin Points = %d', buyerCash, buyerPoint, sellerCash, adminCash, adminPoint));
+
+    console.info(util.format('Buyer Cash = %d, Buyer Points = %d, Seller Cash = %d, Seller Points = %d, Admin Cash = %d, Admin Points = %d', buyerCash, buyerPoint, sellerCash, sellerPoint, adminCashVal, adminPointVal));
 
     await stub.putState(buyer + "_cash", Buffer.from(buyerCash.toString()));
     await stub.putState(buyer + "_point", Buffer.from(buyerPoint.toString()));
     await stub.putState(seller + "_cash", Buffer.from(sellerCash.toString()));
     await stub.putState(seller + "_point", Buffer.from(sellerPoint.toString()));
-    await stub.putState(admin + "_cash", Buffer.from(adminCash.toString()));
-    await stub.putState(admin + "_point", Buffer.from(adminPoint.toString()));
+    await stub.putState(adminCash, Buffer.from(adminCashVal.toString()));
+    await stub.putState(adminPoint, Buffer.from(adminPointVal.toString()));
 
     return Buffer.from('Transaction successful');
-  }
+}
+
+
+  async musicRegister(stub, args) {
+    if (args.length != 3) {
+      throw new Error('Incorrect number of arguments. Expecting 3');
+    }
+    let Seller = args[0];
+    let Music = args[1];
+    let AdminPoint = "admin_point";
+    let AdminCash = "admin_cash";
+  
+    if (!Seller) {
+      throw new Error('Seller must not be empty');
+    }
+  
+    let SellerPointBytes = await stub.getState(Seller + "_point");
+    if (!SellerPointBytes || SellerPointBytes.length === 0) {
+      throw new Error('Failed to get state of Seller points');
+    }
+    let SellerPoint = parseInt(SellerPointBytes.toString());
+  
+    let SellerCashBytes = await stub.getState(Seller + "_cash");
+    if (!SellerCashBytes || SellerCashBytes.length === 0) {
+      throw new Error('Failed to get state of Seller cash');
+    }
+    let SellerCash = parseInt(SellerCashBytes.toString());
+  
+    let AdminPointBytes = await stub.getState(AdminPoint);
+    if (!AdminPointBytes || AdminPointBytes.length === 0) {
+      throw new Error('Failed to get state of Admin points');
+    }
+    let AdminPointVal = parseInt(AdminPointBytes.toString());
+  
+    let AdminCashBytes = await stub.getState(AdminCash);
+    if (!AdminCashBytes || AdminCashBytes.length === 0) {
+      throw new Error('Failed to get state of Admin cash');
+    }
+    let AdminCashVal = parseInt(AdminCashBytes.toString());
+  
+    let price = parseInt(args[2]);
+    if (isNaN(price)) {
+      throw new Error('Expecting integer value for price');
+    }
+  
+    // Ensure Seller has enough value to deduct the fee
+    let fee = price * 0.02;
+    if (SellerPoint + SellerCash < fee) {
+      throw new Error('Seller does not have enough value to pay the fee');
+    }
+  
+    // Deduct fee from POINT first, then from CASH if necessary
+    if (SellerPoint >= fee) {
+      SellerPoint -= fee;
+      AdminPointVal += fee;
+    } else {
+      let remainingFee = fee - SellerPoint;
+      SellerPoint = 0;
+      SellerCash -= remainingFee;
+      AdminCashVal += remainingFee;
+    }
+  
+    console.info(util.format('SellerPoint = %d, SellerCash = %d, AdminPointVal = %d, AdminCashVal = %d\n', SellerPoint, SellerCash, AdminPointVal, AdminCashVal));
+  
+    // Write the updated states back to the ledger
+    await stub.putState(Seller + "_point", Buffer.from(SellerPoint.toString()));
+    await stub.putState(Seller + "_cash", Buffer.from(SellerCash.toString()));
+    await stub.putState(AdminPoint, Buffer.from(AdminPointVal.toString()));
+    await stub.putState(AdminCash, Buffer.from(AdminCashVal.toString()));
+  
+    // Save the music information to the ledger
+    await stub.putState(Music, Buffer.from(JSON.stringify({ seller: Seller, price: price })));
+}
 
 
   async invoke(stub, args) {

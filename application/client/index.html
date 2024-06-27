@@ -68,7 +68,16 @@
         <input id="paymentAB" type="submit" value="Send" class="btn btn-primary" ng-click="paymentAB()">
       </div>
       <hr>
-
+      <div class="form-group">
+        <label>Music Register</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
+        <br>
+        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.seller">
+        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.music">
+        Price: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="musicRegister.price">
+        <input id="musicRegister" type="submit" value="Send" class="btn btn-primary" ng-click="musicRegister()">
+      </div>
+      <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
         <label>User</label>
