@@ -15,9 +15,27 @@ const ABstore = class {
     let ret = stub.getFunctionAndParameters();
     console.info(ret);
     try {
-      await stub.putState("admin", Buffer.from("0"));
+      await stub.putState("admin_cash", Buffer.from("100000000"));
+      await stub.putState("admin_point", Buffer.from("100000000"));
       return shim.success();
     } catch (err) {
+      return shim.error(err);
+    }
+  }
+
+  async Payment(stub){
+    console.log("========= Add Cash =========");
+    console.info(ret);
+    let method = this[ret.fcn];
+    if (!method) {
+      console.log('no method of name:' + ret.fcn + ' found');
+      return shim.success();
+    }
+    try {
+      let payload = await method(stub, ret.params);
+      return shim.success(payload);
+    } catch (err) {
+      console.log(err);
       return shim.error(err);
     }
   }
@@ -41,18 +59,103 @@ const ABstore = class {
 
   async init(stub, args) {
     // initialise only if 2 parameters passed.
-    if (args.length != 2) {
-      return shim.error('Incorrect number of arguments. Expecting 2');
+    if (args.length != 3) {
+      return shim.error('Incorrect number of arguments. Expecting 3');
     }
 
-    let A = args[0];
-    let Aval = args[1];
+    let user = args[0];
+    let user_cash = args[1];
+    let user_point = args[2];
 
-    if (typeof parseInt(Aval) !== 'number') {
+    if (typeof parseInt(user_cash) !== 'number' || typeof parseInt(user_point) !== 'number') {
       return shim.error('Expecting integer value for asset holding');
     }
 
-    await stub.putState(A, Buffer.from(Aval));
+    await stub.putState(user + "_cash",  Buffer.from(user_cash));
+    await stub.putState(user + "_point",  Buffer.from("1000"));
+  }
+
+  async payment(stub, args) {
+    if(args.length != 3){
+      throw new Error('Incorrect number of arguments. Expecting 3');
+    }
+
+    let buyer = args[0];
+    let seller =args[1];
+    let amount = parseInt(args[2]);
+    let admin = 'admin';
+
+    if ( !buyer || !seller || isNaN(amount)) {
+      throw new Error('Invalid arguments. Expecting buyer, seller, and amount');
+    }
+
+    let buyerCashBytes = await stub.getState(buyer + "_cash");
+    let buyerPointBytes = await stub.getState(buyer + "_point");
+    if (!buyerCashBytes || buyerCashBytes.length === 0 || !buyerPointBytes || buyerPointBytes.length === 0) {
+      throw new Error('Failed to get state of buyer');
+    }
+
+    let buyerCash = parseInt(buyerCashBytes.toString());
+    let buyerPoint = parseInt(buyerPointBytes.toString());
+
+    let sellerCashBytes = await stub.getState(seller + "_cash");
+    let sellerPointBytes = await stub.getState(seller + "_point");
+    if (!sellerCashBytes || sellerCashBytes.length === 0 || !sellerPointBytes || sellerPointBytes.length === 0) {
+      throw new Error('Failed to get state of seller');
+    }
+
+    let sellerCash = parseInt(sellerCashBytes.toString());
+    let sellerPoint = parseInt(sellerCashBytes.toString());
+
+    let adminCashBytes = await stub.getState(admin + "_cash");
+    let adminPointBytes = await stub.getState(admin + "_point");
+    if (!adminCashBytes || adminCashBytes.length === 0 || !adminPointBytes || adminPointBytes.length === 0) {
+      throw new Error('Failed to get state of admin');
+    }
+    let adminCash = parseInt(adminCashBytes.toString());
+    let adminPoint = parseInt(adminPointBytes.toString());
+
+    //구매자가 포인트가 가격보다 비싸면 포인트로만 결제하고, 그게 아니면 가격에서 포인트를 빼는 로직
+    let remainAmount = amount;
+
+    if ( buyerPoint >= remainAmount) {
+      buyerPoint  -= remainAmount;
+      remainAmount = 0;
+    }else {
+      remainAmount -= buyerPoint;
+      buyerPoint = 0;
+    }
+
+    //포인트 제외한 잔액 결제처리, 캐시로 결제한 금액 5% point로 적립
+    let promotionPoint = 0; 
+    if( remainAmount > 0) {
+      if( buyerCash >= remainAmount ){
+        buyerCash -= remainAmount;
+        adminCash += remainAmount;
+
+        promotionPoint = Math.floor(remainAmount * 0.05);
+        remainAmount = 0;
+      } else {
+        throw new Error(user + 'Not Enough Money');
+      }
+    }
+
+    let tax = Math.floor(amount * 0.1);
+    let totalPrice = amount - tax;
+    
+    adminCash -= totalPrice;
+    sellerCash += totalPrice;
+    
+    console.info(util.format('Buyer Cash = %d, Buyer Points = %d, Seller Cash = %d, Admin Cash = %d, Admin Points = %d', buyerCash, buyerPoint, sellerCash, adminCash, adminPoint));
+
+    await stub.putState(buyer + "_cash", Buffer.from(buyerCash.toString()));
+    await stub.putState(buyer + "_point", Buffer.from(buyerPoint.toString()));
+    await stub.putState(seller + "_cash", Buffer.from(sellerCash.toString()));
+    await stub.putState(seller + "_point", Buffer.from(sellerPoint.toString()));
+    await stub.putState(admin + "_cash", Buffer.from(adminCash.toString()));
+    await stub.putState(admin + "_point", Buffer.from(adminPoint.toString()));
+
+    return Buffer.from('Transaction successful');
   }
 
 
