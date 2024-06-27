@@ -38,7 +38,6 @@ app.controller('AppCtrl', function($scope, appFactory){
         $("#success_musicRegister").show();
     });
 }
-
    $scope.invokeAB = function(){
        $("#success_invoke").hide();
        appFactory.invokeAB($scope.invoke, function(data){
@@ -69,13 +68,29 @@ app.controller('AppCtrl', function($scope, appFactory){
             $("#success_delete").show();
         });
     }
+    $scope.rechargeAB = function(){
+        $("#success_recharge").hide();
+        appFactory.rechargeAB($scope.recharge, function(data){
+          if(data == "")
+            $scope.recharge = "success";
+            $("#success_recharge").show();
+        });
+      }
+    $scope.refundAB = function(){
+        $("#success_refund").hide();
+        appFactory.refundAB($scope.refund, function(data){
+            if(data == "")
+            $scope.refund = "success";
+            $("#success_refund").show();
+        });
+    }
 });
 app.factory('appFactory', function($http){
       
     var factory = {};
  
     factory.initAB = function(data, callback){
-        $http.get('/init?user='+data.user+'&cash='+data.cash+'&point='+data.point).success(function(output){
+        $http.get('/init?user='+data.user).success(function(output){
             callback(output)
         });
     }
@@ -103,6 +118,16 @@ app.factory('appFactory', function($http){
     factory.deleteAB = function(name, callback){
         $http.get('/delete?name='+name).success(function(output){
             callback(output)
+        });
+    }
+    factory.rechargeAB = function(data, callback){
+        $http.get('/recharge?user='+data.user+'&amount='+data.amount).success(function(output){
+          callback(output)
+        });
+    }
+    factory.refundAB = function(data, callback){
+        $http.get('/refund?user='+data.user+'&amount='+data.amount).success(function(output){
+          callback(output)
         });
     }
     return factory;

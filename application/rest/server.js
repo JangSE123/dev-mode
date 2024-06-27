@@ -10,10 +10,36 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/init', function (req, res) {
    let user = req.query.user;
-   let cash = req.query.cash;
-   let point = req.query.point;
+   let cash = 0;
+   let point = 0;
    let args = [user, cash, point];
    sdk.send(false, 'init', args, res);
+});
+
+app.get('/recharge', function (req, res) {
+   let user = req.query.user;
+   let rechargeAmount = req.query.amount;
+
+   if (!user || !rechargeAmount) {
+      res.status(400).send('User and recharge amount are required');
+      return;
+   }
+
+   let args = [user, rechargeAmount];
+   sdk.send(false, 'recharge', args, res);
+});
+
+app.get('/refund', function (req, res) {
+   let user = req.query.user;
+   let refundAmount = req.query.amount;
+
+   if (!user || !refundAmount) {
+      res.status(400).send('User and recharge amount are required');
+      return;
+   }
+
+   let args = [user, refundAmount];
+   sdk.send(false, 'refund', args, res);
 });
 
 app.get('/invoke', function (req, res) {
@@ -23,6 +49,7 @@ app.get('/invoke', function (req, res) {
    let args = [sender, receiver, amount];
    sdk.send(false, 'invoke', args, res);
 });
+
 
 app.get('/payment', function (req, res) {
    let buyer = req.query.buyer;

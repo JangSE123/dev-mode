@@ -23,6 +23,62 @@ const ABstore = class {
     }
   }
 
+  async recharge(stub, args) {
+    if (args.length != 2) {
+      throw new Error('Incorrect number of arguments. Expecting 2');
+    }
+  
+    let user = args[0];
+    let rechargeAmount = parseInt(args[1]);
+  
+    if (isNaN(rechargeAmount) || rechargeAmount <= 0) {
+      throw new Error('Invalid recharge amount. Must be a positive integer');
+    }
+  
+    let userCashBytes = await stub.getState(user + "_cash");
+    if (!userCashBytes || userCashBytes.length === 0) {
+      throw new Error('Failed to get state of user cash');
+    }
+  
+    let userCash = parseInt(userCashBytes.toString());
+    userCash += rechargeAmount;
+  
+    await stub.putState(user + "_cash", Buffer.from(userCash.toString()));
+  
+    return Buffer.from('Recharge successful');
+  }
+
+  async refund(stub, args) {
+    if (args.length != 2) {
+        throw new Error('Incorrect number of arguments. Expecting 2');
+    }
+
+    let user = args[0];
+    let refundAmount = parseInt(args[1]);
+
+    if (isNaN(refundAmount) || refundAmount <= 0) {
+        throw new Error('Invalid refund amount. Must be a positive integer');
+    }
+
+    let userCashBytes = await stub.getState(user + "_cash");
+    if (!userCashBytes || userCashBytes.length === 0) {
+        throw new Error('Failed to get state of user cash');
+    }
+
+    let userCash = parseInt(userCashBytes.toString());
+
+    if (refundAmount > userCash) {
+        throw new Error('Refund amount exceeds user cash balance');
+    }
+
+    userCash -= refundAmount;
+
+    await stub.putState(user + "_cash", Buffer.from(userCash.toString()));
+
+    return Buffer.from('Refund successful');
+}
+
+
   async Payment(stub){
     console.log("========= Add Cash =========");
     console.info(ret);
@@ -64,15 +120,11 @@ const ABstore = class {
     }
 
     let user = args[0];
-    let user_cash = args[1];
-    let user_point = args[2];
-
-    if (typeof parseInt(user_cash) !== 'number' || typeof parseInt(user_point) !== 'number') {
-      return shim.error('Expecting integer value for asset holding');
-    }
+    let user_cash = 0;
+    let user_point = 1000;
 
     await stub.putState(user + "_cash",  Buffer.from(user_cash));
-    await stub.putState(user + "_point",  Buffer.from("1000"));
+    await stub.putState(user + "_point",  Buffer.from(user_point));
   }
 
   async payment(stub, args) {
