@@ -40,23 +40,36 @@ app.get('/musicregister', function (req, res) {
    sdk.send(false, 'musicRegister', args, res);
 });
 
+app.get('/buymusic', function (req, res) {
+   let buyer = req.query.buyer;
+   let seller = req.query.seller;
+   let sellerItem = req.query.musicName;
+   let price = req.query.price;
+   let args = [buyer, seller, sellerItem, price];
+   sdk.send(false, 'buyMusic', args, res);
+});
+
 app.get('/query', async function (req, res) {
    try {
       let name = req.query.name;
       let cashArgs = [name + '_cash'];
       let pointArgs = [name + '_point'];
+      let itemsArgs = [name + '_items'];
 
       let cashResult = await sdk.query('query', cashArgs);
       let pointResult = await sdk.query('query', pointArgs);
+      let itemsResult = await sdk.query('query', itemsArgs);
 
       res.json({
          cash: cashResult.toString(),
-         point: pointResult.toString()
+         point: pointResult.toString(),
+         items: JSON.parse(itemsResult.toString())
       });
    } catch (error) {
       res.status(500).send(error.toString());
    }
 });
+
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.listen(PORT, HOST);

@@ -9,6 +9,7 @@ app.controller('AppCtrl', function($scope, appFactory){
    $("#success_query_admin").hide();
    $("#success_delete").hide();
    $("#success_payment").hide();
+   $("#success_buyMusic").hide();
 
    $scope.initAB = function(){
    $("#success_init").hide();
@@ -36,8 +37,24 @@ app.controller('AppCtrl', function($scope, appFactory){
         if(data == "")
         $scope.musicRegister = "success";
         $("#success_musicRegister").show();
-    });
-}
+     });
+    }
+
+    $scope.buyMusic = function(){
+        $("#success_buyMusic").hide();
+        let data = {
+            buyer : $scope.buyMusic.buyer,
+            seller : $scope.buyMusic.seller,
+            sellerItem : $scope.buyMusic.sellerItem, 
+            price : $scope.buyMusic.price
+        };
+        appFactory.buyMusic(data, function(response){
+            if(response == ""){
+                $scope.buyMusic_status = "success";
+                $("#success_buyMusic").show();
+            }
+        });
+    };
 
    $scope.invokeAB = function(){
        $("#success_invoke").hide();
@@ -94,7 +111,11 @@ app.factory('appFactory', function($http){
             callback(output)
         });
     }
-
+    factory.buyMusic = function(data, callback){
+        $http.get('/buymusic?buyer='+data.buyer+'&seller='+data.seller+'&musicName='+data.sellerItem+'&price='+data.price).success(function(output){
+            callback(output);
+        });
+    };
     factory.queryAB = function(name, callback){
         $http.get('/query?name='+name).success(function(output){
             callback(output)
