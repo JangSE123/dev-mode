@@ -1,21 +1,20 @@
-/*
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-*/
-
 const shim = require('fabric-shim');
 const util = require('util');
 
 const ABstore = class {
 
-  // Initialize the chaincode
   async Init(stub) {
     console.info('========= ABstore Init =========');
     let ret = stub.getFunctionAndParameters();
     console.info(ret);
     try {
-      await stub.putState("admin", Buffer.from("0"));
+
+      let userID = "admin";
+      let userPW = "admin";
+      let userCash = "100000";
+      let userPoint = "100000";
+  
+      await stub.putState(userID, Buffer.from(JSON.stringify({ userPW, userCash, userPoint })));
       return shim.success();
     } catch (err) {
       return shim.error(err);
@@ -40,21 +39,17 @@ const ABstore = class {
   }
 
   async init(stub, args) {
-    // initialise only if 2 parameters passed.
     if (args.length != 2) {
       return shim.error('Incorrect number of arguments. Expecting 2');
     }
 
-    let A = args[0];
-    let Aval = args[1];
+    let userID = args[0];
+    let userPW = args[1];
+    let userCash = "0";
+    let userPoint = "1000";
 
-    if (typeof parseInt(Aval) !== 'number') {
-      return shim.error('Expecting integer value for asset holding');
-    }
-
-    await stub.putState(A, Buffer.from(Aval));
+    await stub.putState(userID, Buffer.from(JSON.stringify({ userPW, userCash, userPoint })));
   }
-
 
   async invoke(stub, args) {
     if (args.length != 3) {
@@ -68,74 +63,65 @@ const ABstore = class {
       throw new Error('asset holding must not be empty');
     }
 
-    // Get the state from the ledger
     let Avalbytes = await stub.getState(A);
     if (!Avalbytes) {
       throw new Error('Failed to get state of asset holder A');
     }
-    let Aval = parseInt(Avalbytes.toString());
+    let Aval = JSON.parse(Avalbytes.toString());
 
     let Bvalbytes = await stub.getState(B);
     if (!Bvalbytes) {
       throw new Error('Failed to get state of asset holder B');
     }
-    let Bval = parseInt(Bvalbytes.toString());
+    let Bval = JSON.parse(Bvalbytes.toString());
 
     let Adminvalbytes = await stub.getState(Admin);
     if (!Adminvalbytes) {
       throw new Error('Failed to get state of asset holder A');
     }
-    let Adminval = parseInt(Adminvalbytes.toString());
-    // Perform the execution
+    let Adminval = JSON.parse(Adminvalbytes.toString());
+    
     let amount = parseInt(args[2]);
     if (typeof amount !== 'number') {
       throw new Error('Expecting integer value for amount to be transaferred');
     }
-    Aval = Aval - amount;
-    Bval = Bval + amount - ( amount / 10 );
-    Adminval = Adminval + ( amount / 10 );
-    console.info(util.format('Aval = %d, Bval = %d, Adminval = %d\n', Aval, Bval, Adminval));
+    Aval.userCash = parseInt(Aval.userCash) - amount;
+    Bval.userCash = parseInt(Bval.userCash) + amount - (amount / 10);
+    Adminval.userCash = parseInt(Adminval.userCash) + (amount / 10);
 
-    // Write the states back to the ledger
-    await stub.putState(A, Buffer.from(Aval.toString()));
-    await stub.putState(B, Buffer.from(Bval.toString()));
-    await stub.putState(Admin, Buffer.from(Adminval.toString()));
+    await stub.putState(A, Buffer.from(JSON.stringify(Aval)));
+    await stub.putState(B, Buffer.from(JSON.stringify(Bval)));
+    await stub.putState(Admin, Buffer.from(JSON.stringify(Adminval)));
   }
 
-  // Deletes an entity from state
   async delete(stub, args) {
     if (args.length != 1) {
       throw new Error('Incorrect number of arguments. Expecting 1');
     }
 
-    let A = args[0];
-
-    // Delete the key from the state in ledger
-    await stub.deleteState(A);
+    let userID = args[0];
+    await stub.deleteState(userID);
   }
-
-  // query callback representing the query of a chaincode
   async query(stub, args) {
     if (args.length != 1) {
-      throw new Error('Incorrect number of arguments. Expecting name of the person to query')
+        throw new Error('Incorrect number of arguments. Expecting name of the person to query');
     }
 
     let jsonResp = {};
-    let A = args[0];
+    let userID = args[0];
 
-    // Get the state from the ledger
-    let Avalbytes = await stub.getState(A);
-    if (!Avalbytes) {
-      jsonResp.error = 'Failed to get state for ' + A;
-      throw new Error(JSON.stringify(jsonResp));
+    let userBytes = await stub.getState(userID);
+    if (!userBytes || userBytes.length === 0) {
+        jsonResp.error = 'Failed to get state for ' + userID;
+        throw new Error(JSON.stringify(jsonResp));
     }
 
-    jsonResp.name = A;
-    jsonResp.amount = Avalbytes.toString();
+    jsonResp.name = userID;
+    jsonResp.data = JSON.parse(userBytes.toString());
     console.info('Query Response:');
     console.info(jsonResp);
-    return Avalbytes;
-  }
+    return Buffer.from(JSON.stringify(jsonResp));
+}
 };
 
 shim.start(new ABstore());

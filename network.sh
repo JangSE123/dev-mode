@@ -116,7 +116,9 @@ elif [ "$1" == "prod" ]; then
  sleep 2
  sleep 2
  joinChannel createChannel
+ sleep 2
  joinChannel joinChannelProd
+ sleep 2
  joinChannel updateAnchorProd
  sleep 2
  runCAdev

@@ -2,33 +2,32 @@
 <html>
  <head>
    <title>Hyperledger Fabric AB Store</title>
-
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 
    <style type="text/css">
-     header{
+     header {
        background-color: lightgray;
-       font-size:20px;
-       padding:20px;
+       font-size: 20px;
+       padding: 20px;
      }
-     header, .form-group{
+     header, .form-group {
        margin-bottom: 3%;
      }
-     .form-group{
-       width:50%;
+     .form-group {
+       width: 50%;
      }
-     #body{
-       margin-left:3%;
-       margin-right:3%;
+     #body {
+       margin-left: 3%;
+       margin-right: 3%;
      }
-     .form-control{
+     .form-control {
        margin: 8px;
      }
-     label{
-       font-size:20px;
+     label {
+       font-size: 20px;
      }
    </style>
  </head>
@@ -41,8 +40,8 @@
         <label>Init</label>
         <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
         <br>
-        A: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.a">
-        A Value: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.aval">
+        User ID: <input class="form-control" type="text" placeholder="Ex: user1" ng-model="abstore.userID">
+        User PW: <input class="form-control" type="password" placeholder="Ex: password" ng-model="abstore.userPW">
         <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
       </div>
       <hr>
@@ -50,8 +49,8 @@
         <label>Invoke</label>
         <h5 style="color:green;margin-bottom:2%" id="success_invoke">{{invoke_ab}}</h5>
         <br>
-        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="invoke.sender">
-        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="invoke.receiver">
+        Sender: <input class="form-control" type="text" placeholder="Ex: user1" ng-model="invoke.sender">
+        Receiver: <input class="form-control" type="text" placeholder="Ex: user2" ng-model="invoke.receiver">
         Amount: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="invoke.amount">
         <input id="invokeAB" type="submit" value="Send" class="btn btn-primary" ng-click="invokeAB()">
       </div>
@@ -59,9 +58,10 @@
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
         <label>User</label>
-        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
+        <p><input class="form-control" type="text" placeholder="Ex: user1" ng-model="walletid">
         <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
       </div>
+      <hr>
       <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
@@ -72,11 +72,10 @@
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_delete">{{delete_ab}}</h5>
         <label>Delete</label>
-        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
+        <p><input class="form-control" type="text" placeholder="Ex: user1" ng-model="deleteid">
         <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
       </div>
     </div>
   </body>
-  <script type="text/javascript" src="app.js"> </script>
- </html>
- 
+  <script type="text/javascript" src="app.js"></script>
+</html>

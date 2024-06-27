@@ -8,14 +8,16 @@ app.controller('AppCtrl', function($scope, appFactory){
    $("#success_qurey").hide();
    $("#success_qurey_admin").hide();
    $("#success_delete").hide();
+   
    $scope.initAB = function(){
-   $("#success_init").hide();
+       $("#success_init").hide();
        appFactory.initAB($scope.abstore, function(data){
            if(data == "")
            $scope.init_ab = "success";
            $("#success_init").show();
        });
    }
+   
    $scope.invokeAB = function(){
        $("#success_invoke").hide();
        appFactory.invokeAB($scope.invoke, function(data){
@@ -24,6 +26,7 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_invoke").show();
        });
    }
+   
    $scope.queryAB = function(){
        $("#success_qurey").hide();
        appFactory.queryAB($scope.walletid, function(data){
@@ -31,6 +34,7 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_qurey").show();
        });
    }
+   
    $scope.queryAdmin = function(){
        $("#success_qurey_admin").hide();
        appFactory.queryAB("admin", function(data){
@@ -38,6 +42,7 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_qurey_admin").show();
        });
    }
+   
    $scope.deleteAB = function(){
         $("#success_delete").hide();
         appFactory.deleteAB($scope.deleteid, function(data){
@@ -47,30 +52,32 @@ app.controller('AppCtrl', function($scope, appFactory){
         });
     }
 });
+
 app.factory('appFactory', function($http){
-      
     var factory = {};
- 
+
     factory.initAB = function(data, callback){
-        $http.get('/init?user='+data.a+'&userVal='+data.aval+'&b='+data.b+'&bval='+data.bval+'&c='+data.c+'&cval='+data.cval).success(function(output){
+        $http.get('/init?userID=' + data.userID + '&userPW=' + data.userPW).success(function(output){
             callback(output)
         });
     }
+
     factory.invokeAB = function(data, callback){
-        $http.get('/invoke?sender='+data.sender+'&receiver='+data.receiver+'&amount='+data.amount).success(function(output){
+        $http.get('/invoke?sender=' + data.sender + '&receiver=' + data.receiver + '&amount=' + data.amount).success(function(output){
             callback(output)
         });
     }
+
     factory.queryAB = function(name, callback){
-        $http.get('/query?name='+name).success(function(output){
+        $http.get('/query?name=' + name).success(function(output){
             callback(output)
         });
     }
+
     factory.deleteAB = function(name, callback){
-        $http.get('/delete?name='+name).success(function(output){
+        $http.get('/delete?name=' + name).success(function(output){
             callback(output)
         });
     }
     return factory;
- });
- 
+});
