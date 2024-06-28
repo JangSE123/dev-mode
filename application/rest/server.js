@@ -71,8 +71,7 @@ app.get('/buymusic', function (req, res) {
    let buyer = req.query.buyer;
    let seller = req.query.seller;
    let sellerItem = req.query.musicName;
-   let price = req.query.price;
-   let args = [buyer, seller, sellerItem, price];
+   let args = [buyer, seller, sellerItem];
    sdk.send(false, 'buyMusic', args, res);
 });
 
