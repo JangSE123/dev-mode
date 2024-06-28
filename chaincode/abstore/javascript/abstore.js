@@ -13,7 +13,10 @@ const ABstore = class {
   async Init(stub) {
     console.info('========= ABstore Init =========');
     let ret = stub.getFunctionAndParameters();
-    let defaultItems = ["song1", "song2"];
+    let defaultItems = [
+      { name: "song1", price: 1500 },
+      { name: "song2", price: 1000 }
+  ];
     let items = JSON.stringify(defaultItems);
     console.info(ret);
     try {
@@ -227,71 +230,83 @@ const ABstore = class {
     if (args.length != 3) {
       throw new Error('Incorrect number of arguments. Expecting 3');
     }
-    let Seller = args[0];
-    let Music = args[1];
-    let AdminPoint = "admin_point";
-    let AdminCash = "admin_cash";
-
-    if (!Seller) {
-      throw new Error('Seller must not be empty');
-    }
-
-    let SellerPointBytes = await stub.getState(Seller + "_point");
-    if (!SellerPointBytes || SellerPointBytes.length === 0) {
-      throw new Error('Failed to get state of Seller points');
-    }
-    let SellerPoint = parseInt(SellerPointBytes.toString());
-
-    let SellerCashBytes = await stub.getState(Seller + "_cash");
-    if (!SellerCashBytes || SellerCashBytes.length === 0) {
-      throw new Error('Failed to get state of Seller cash');
-    }
-    let SellerCash = parseInt(SellerCashBytes.toString());
-
-    let AdminPointBytes = await stub.getState(AdminPoint);
-    if (!AdminPointBytes || AdminPointBytes.length === 0) {
-      throw new Error('Failed to get state of Admin points');
-    }
-    let AdminPointVal = parseInt(AdminPointBytes.toString());
-
-    let AdminCashBytes = await stub.getState(AdminCash);
-    if (!AdminCashBytes || AdminCashBytes.length === 0) {
-      throw new Error('Failed to get state of Admin cash');
-    }
-    let AdminCashVal = parseInt(AdminCashBytes.toString());
-
+    let seller = args[0];
+    let musicName = args[1];
     let price = parseInt(args[2]);
+    let adminPoint = "admin_point";
+    let adminCash = "admin_cash";
+
+    if (!seller) {
+      throw new Error('seller must not be empty');
+    }
+
+    let sellerPointBytes = await stub.getState(seller + "_point");
+    if (!sellerPointBytes || sellerPointBytes.length === 0) {
+      throw new Error('Failed to get state of seller points');
+    }
+    let sellerPoint = parseInt(sellerPointBytes.toString());
+
+    let sellerCashBytes = await stub.getState(seller + "_cash");
+    if (!sellerCashBytes || sellerCashBytes.length === 0) {
+      throw new Error('Failed to get state of seller cash');
+    }
+    let sellerCash = parseInt(sellerCashBytes.toString());
+
+    let adminPointBytes = await stub.getState(adminPoint);
+    if (!adminPointBytes || adminPointBytes.length === 0) {
+      throw new Error('Failed to get state of admin points');
+    }
+    let adminPointVal = parseInt(adminPointBytes.toString());
+
+    let adminCashBytes = await stub.getState(adminCash);
+    if (!adminCashBytes || adminCashBytes.length === 0) {
+      throw new Error('Failed to get state of admin cash');
+    }
+    let adminCashVal = parseInt(adminCashBytes.toString());
+
+    
     if (isNaN(price)) {
       throw new Error('Expecting integer value for price');
     }
 
-    // Ensure Seller has enough value to deduct the fee
+    // Ensure seller has enough value to deduct the fee
     let fee = price * 0.02;
-    if (SellerPoint + SellerCash < fee) {
-      throw new Error('Seller does not have enough value to pay the fee');
+    if (sellerPoint + sellerCash < fee) {
+      throw new Error('seller does not have enough value to pay the fee');
     }
 
     // Deduct fee from POINT first, then from CASH if necessary
-    if (SellerPoint >= fee) {
-      SellerPoint -= fee;
-      AdminPointVal += fee;
+    if (sellerPoint >= fee) {
+      sellerPoint -= fee;
+      adminPointVal += fee;
     } else {
-      let remainingFee = fee - SellerPoint;
-      SellerPoint = 0;
-      SellerCash -= remainingFee;
-      AdminCashVal += remainingFee;
+      let remainingFee = fee - sellerPoint;
+      sellerPoint = 0;
+      sellerCash -= remainingFee;
+      adminCashVal += remainingFee;
     }
 
-    console.info(util.format('SellerPoint = %d, SellerCash = %d, AdminPointVal = %d, AdminCashVal = %d\n', SellerPoint, SellerCash, AdminPointVal, AdminCashVal));
+    // Seller's items 확인
+    let sellerItemsBytes = await stub.getState(seller + "_items");
+    let sellerItems = [];
+    if (sellerItemsBytes && sellerItemsBytes.length > 0) {
+        sellerItems = JSON.parse(sellerItemsBytes.toString());
+    }
+
+    // 음악과 가격을 객체 형태로 추가
+    sellerItems.push({name: musicName, price: price});
+
+
+    console.info(util.format('sellerPoint = %d, sellerCash = %d, adminPointVal = %d, adminCashVal = %d\n', sellerPoint, sellerCash, adminPointVal, adminCashVal));
 
     // Write the updated states back to the ledger
-    await stub.putState(Seller + "_point", Buffer.from(SellerPoint.toString()));
-    await stub.putState(Seller + "_cash", Buffer.from(SellerCash.toString()));
-    await stub.putState(AdminPoint, Buffer.from(AdminPointVal.toString()));
-    await stub.putState(AdminCash, Buffer.from(AdminCashVal.toString()));
+    await stub.putState(seller + "_point", Buffer.from(sellerPoint.toString()));
+    await stub.putState(seller + "_cash", Buffer.from(sellerCash.toString()));
+    await stub.putState(adminPoint, Buffer.from(adminPointVal.toString()));
+    await stub.putState(adminCash, Buffer.from(adminCashVal.toString()));
 
     // Save the music information to the ledger
-    await stub.putState(Music, Buffer.from(JSON.stringify({ seller: Seller, price: price })));
+    await stub.putState(musicName, Buffer.from(JSON.stringify({ seller: seller, price: price })));
   }
 
   async buyMusic(stub, args) {
