@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header .sign-in {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .greeting {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .greeting h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fafafa;
+        }
+
+        .info div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .info div:not(:last-child) {
+            border-right: 1px solid #ddd;
+        }
+
+        .info h2 {
+            margin: 0 0 10px;
+            font-size: 1.5em;
+        }
+
+        .info p {
+            margin: 0;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .buttons button {
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .section li {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .amounts label {
+            margin: 0 10px;
+        }
+
+        .amounts input[type="radio"] {
+            display: none;
+        }
+
+        .amounts input[type="radio"] + label {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .amounts input[type="radio"]:checked + label {
+            background-color: #ffccff;
+            border-color: #ff00ff;
+        }
+    </style>
+    <script>
+        // Example user data and music/transaction data
+        const userData = {
+            username: '홍길동',
+            cash: 50000,
+            points: 1200,
+            ownedTracks: [
+                'Ak47 - 아티스트: Men\'s Tear(맨스티어)',
+                'Supernova - 아티스트: aespa',
+                'How Sweet - 아티스트: NewJeans'
+            ],
+            transactionHistory: [
+                '100,000 cash 충전 - 2024-01-15',
+                '50,000 cash 환급 - 2024-01-10'
+            ]
+        };
+
+        function openChargeModal() {
+            Swal.fire({
+                title: 'Charge Cash',
+                html: `
+                    <div class="points">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+                    <div class="amounts">
+                        <input type="radio" id="charge-5000" name="charge-amount" value="5000">
+                        <label for="charge-5000">5,000</label>
+                        <input type="radio" id="charge-10000" name="charge-amount" value="10000">
+                        <label for="charge-10000">10,000</label>
+                        <input type="radio" id="charge-30000" name="charge-amount" value="30000">
+                        <label for="charge-30000">30,000</label>
+                        <input type="radio" id="charge-50000" name="charge-amount" value="50000">
+                        <label for="charge-50000">50,000</label>
+                        <input type="radio" id="charge-100000" name="charge-amount" value="100000">
+                        <label for="charge-100000">100,000</label>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '충전하기',
+                preConfirm: () => {
+                    const selectedAmount = document.querySelector('input[name="charge-amount"]:checked');
+                    if (selectedAmount) {
+                        return selectedAmount.value;
+                    } else {
+                        Swal.showValidationMessage('충전할 금액을 선택해주세요');
+                        return false;
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(`충전 완료: ${result.value} 원`);
+                }
+            });
+
+            const chargeRadios = document.querySelectorAll('input[name="charge-amount"]');
+            chargeRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    document.getElementById('charge-amount').innerText = this.value;
+                });
+            });
+        }
+
+        function openRefundModal() {
+            Swal.fire({
+                title: 'Refund Cash',
+                html: `
+                    <div class="points">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+                    <div class="amounts">
+                        <input type="radio" id="refund-10000" name="refund-amount" value="10000">
+                        <label for="refund-10000">10,000</label>
+                        <input type="radio" id="refund-20000" name="refund-amount" value="20000">
+                        <label for="refund-20000">20,000</label>
+                        <input type="radio" id="refund-30000" name="refund-amount" value="30000">
+                        <label for="refund-30000">30,000</label>
+                        <input type="radio" id="refund-50000" name="refund-amount" value="50000">
+                        <label for="refund-50000">50,000</label>
+                        <input type="radio" id="refund-100000" name="refund-amount" value="100000">
+                        <label for="refund-100000">100,000</label>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '환급하기',
+                preConfirm: () => {
+                    const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
+                    if (selectedAmount) {
+                        return selectedAmount.value;
+                    } else {
+                        Swal.showValidationMessage('환급할 금액을 선택해주세요');
+                        return false;
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(`환급 완료: ${result.value} 원`);
+                }
+            });
+
+            const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
+            refundRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    document.getElementById('refund-amount').innerText = this.value;
+                });
+            });
+        }
+
+        window.onload = function() {
+            document.getElementById('username').innerText = userData.username;
+            document.getElementById('cash').innerText = userData.cash.toLocaleString();
+            document.getElementById('points').innerText = userData.points.toLocaleString();
+
+            const ownedTracksList = document.getElementById('owned-tracks-list');
+            userData.ownedTracks.forEach(track => {
+                const li = document.createElement('li');
+                li.textContent = track;
+                ownedTracksList.appendChild(li);
+            });
+
+            const transactionHistoryList = document.getElementById('transaction-history-list');
+            userData.transactionHistory.forEach(transaction => {
+                const li = document.createElement('li');
+                li.textContent = transaction;
+                transactionHistoryList.appendChild(li);
+            });
+        };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">C</div>
+        <div class="menu">
+            <a href="index.html">Home</a>
+            <a href="ChargeCash.html">Charge Cash</a>
+            <a href="SoundTrack.html">Soundtrack</a>
+            <a href="MyPage.html">My Page</a>
+        </div>
+        <a href="Login.html" class="sign-in">Sign in</a>
+    </div>
+
+    <div class="container">
+        <div class="greeting">
+            <h1><span id="username"></span>님, 환영합니다!</h1>
+        </div>
+        
+        <div class="info">
+            <div>
+                <h2>현재 캐쉬</h2>
+                <p><span id="cash"></span> 원</p>
+            </div>
+            <div>
+                <h2>현재 포인트</h2>
+                <p><span id="points"></span> 점</p>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="openChargeModal()">캐쉬 충전하기</button>
+            <button onclick="openRefundModal()">캐쉬 환급하기</button>
+        </div>
+
+        <div class="section">
+            <h2>보유중인 음원</h2>
+            <ul id="owned-tracks-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>거래내역</h2>
+            <ul id="transaction-history-list"></ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        Company Name | Company .2022 © All Rights Reserved
+    </div>
+</body>
+</html>
