@@ -49,6 +49,42 @@ async function send(type, func, args, res, result){
         // process.exit(1);
     }
 }
+async function query(func, args) {
+    try {
+        const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+        const wallet = await Wallets.newFileSystemWallet(walletPath);
+        console.log(`Wallet path: ${walletPath}`);
+
+        const gateway = new Gateway();
+
+        try {
+            await gateway.connect(ccp, {
+                wallet,
+                identity: org1UserId,
+                discovery: { enabled: true, asLocalhost: false }
+            });
+            console.log('Success to connect network');
+
+            const network = await gateway.getNetwork(channelName);
+            console.log('Success to connect channel1');
+            const contract = network.getContract(chaincodeName);
+
+            const result = await contract.evaluateTransaction(func, ...args);
+            return result.toString();
+
+        } catch (error) {
+            console.error(`Failed to query state: ${error}`);
+            throw error;
+        } finally {
+            gateway.disconnect();
+        }
+    } catch (error) {
+        console.error(`Failed to query state: ${error}`);
+        throw error;
+    }
+}
+
 module.exports = {
-    send:send
+    send: send,
+    query: query
 }

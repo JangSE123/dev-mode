@@ -41,19 +41,90 @@
         <label>Init</label>
         <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
         <br>
-        A: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.a">
-        A Value: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.aval">
+        ID: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.user">
         <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
       </div>
       <hr>
       <div class="form-group">
-        <label>Invoke</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_invoke">{{invoke_ab}}</h5>
+        <label>Recharge</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_recharge">{{recharge}}</h5>
         <br>
-        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="invoke.sender">
-        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="invoke.receiver">
-        Amount: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="invoke.amount">
-        <input id="invokeAB" type="submit" value="Send" class="btn btn-primary" ng-click="invokeAB()">
+        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="recharge.user">
+        <br>
+        Select Amount:
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="5000" ng-model="recharge.amount"> 5000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="10000" ng-model="recharge.amount"> 10000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="30000" ng-model="recharge.amount"> 30000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="50000" ng-model="recharge.amount"> 50000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="100000" ng-model="recharge.amount"> 100000</label>
+        </div>
+        <br>
+        <input id="recharge" type="submit" value="Recharge" class="btn btn-primary" ng-click="rechargeAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Refund</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_refund">{{refund}}</h5>
+        <br>
+        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="refund.user">
+        <br>
+        Select Amount:
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="10000" ng-model="refund.amount"> 10000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="20000" ng-model="refund.amount"> 20000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="30000" ng-model="refund.amount"> 30000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="50000" ng-model="refund.amount"> 50000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="100000" ng-model="refund.amount"> 100000</label>
+        </div>
+        <br>
+        <input id="refund" type="submit" value="Refund" class="btn btn-primary" ng-click="refundAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Payment</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_payment">{{payment_ab}}</h5>
+        <br>
+        Buyer: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="payment.buyer">
+        Seller: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="payment.seller">
+        Amount: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="payment.amount">
+        <input id="paymentAB" type="submit" value="Send" class="btn btn-primary" ng-click="paymentAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Music Register</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
+        <br>
+        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.seller">
+        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.music">
+        Price: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="musicRegister.price">
+        <input id="musicRegister" type="submit" value="Send" class="btn btn-primary" ng-click="musicRegister()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Buying Music</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
+        <br>
+        Buyer: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.buyer">
+        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.seller">
+        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.sellerItem">
+        <input id="buyMusic" type="submit" value="Send" class="btn btn-primary" ng-click="buyMusic()">
       </div>
       <hr>
       <div class="form-group">
@@ -62,7 +133,6 @@
         <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
         <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
       </div>
-      <hr>
       <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
