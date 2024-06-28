@@ -147,27 +147,30 @@
             margin-top: 20px;
         }
 
-        .amounts label {
-            margin: 0 10px;
-        }
+        .amounts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Gap between items */
+}
 
-        .amounts input[type="radio"] {
-            display: none;
-        }
+.amounts input[type="radio"] {
+    display: none;
+}
 
-        .amounts input[type="radio"] + label {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+.amounts label {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
 
-        .amounts input[type="radio"]:checked + label {
-            background-color: #ffccff;
-            border-color: #ff00ff;
-        }
+
+.amounts input[type="radio"]:checked + label {
+    background-color: #ffccff;
+    border-color: #ff00ff;
+}
     </style>
     <script>
         // Example user data and music/transaction data
@@ -187,90 +190,91 @@
         };
 
         function openChargeModal() {
-            Swal.fire({
-                title: 'Charge Cash',
-                html: `
-                    <div class="points">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
-                    <div class="amounts">
-                        <input type="radio" id="charge-5000" name="charge-amount" value="5000">
-                        <label for="charge-5000">5,000</label>
-                        <input type="radio" id="charge-10000" name="charge-amount" value="10000">
-                        <label for="charge-10000">10,000</label>
-                        <input type="radio" id="charge-30000" name="charge-amount" value="30000">
-                        <label for="charge-30000">30,000</label>
-                        <input type="radio" id="charge-50000" name="charge-amount" value="50000">
-                        <label for="charge-50000">50,000</label>
-                        <input type="radio" id="charge-100000" name="charge-amount" value="100000">
-                        <label for="charge-100000">100,000</label>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '충전하기',
-                preConfirm: () => {
-                    const selectedAmount = document.querySelector('input[name="charge-amount"]:checked');
-                    if (selectedAmount) {
-                        return selectedAmount.value;
-                    } else {
-                        Swal.showValidationMessage('충전할 금액을 선택해주세요');
-                        return false;
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(`충전 완료: ${result.value} 원`);
-                }
-            });
-
-            const chargeRadios = document.querySelectorAll('input[name="charge-amount"]');
-            chargeRadios.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    document.getElementById('charge-amount').innerText = this.value;
-                });
-            });
+    Swal.fire({
+        title: 'Charge Cash',
+        html: `
+            <div class="points">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+            <div class="amounts">
+                <input type="radio" id="charge-5000" name="charge-amount" value="5000">
+                <label for="charge-5000">5,000</label>
+                <input type="radio" id="charge-10000" name="charge-amount" value="10000">
+                <label for="charge-10000">10,000</label>
+                <input type="radio" id="charge-30000" name="charge-amount" value="30000">
+                <label for="charge-30000">30,000</label>
+                <input type="radio" id="charge-50000" name="charge-amount" value="50000">
+                <label for="charge-50000">50,000</label>
+                <input type="radio" id="charge-100000" name="charge-amount" value="100000">
+                <label for="charge-100000">100,000</label>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '충전하기',
+        preConfirm: () => {
+            const selectedAmount = document.querySelector('input[name="charge-amount"]:checked');
+            if (selectedAmount) {
+                return selectedAmount.value;
+            } else {
+                Swal.showValidationMessage('충전할 금액을 선택해주세요');
+                return false;
+            }
         }
-
-        function openRefundModal() {
-            Swal.fire({
-                title: 'Refund Cash',
-                html: `
-                    <div class="points">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
-                    <div class="amounts">
-                        <input type="radio" id="refund-10000" name="refund-amount" value="10000">
-                        <label for="refund-10000">10,000</label>
-                        <input type="radio" id="refund-20000" name="refund-amount" value="20000">
-                        <label for="refund-20000">20,000</label>
-                        <input type="radio" id="refund-30000" name="refund-amount" value="30000">
-                        <label for="refund-30000">30,000</label>
-                        <input type="radio" id="refund-50000" name="refund-amount" value="50000">
-                        <label for="refund-50000">50,000</label>
-                        <input type="radio" id="refund-100000" name="refund-amount" value="100000">
-                        <label for="refund-100000">100,000</label>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '환급하기',
-                preConfirm: () => {
-                    const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
-                    if (selectedAmount) {
-                        return selectedAmount.value;
-                    } else {
-                        Swal.showValidationMessage('환급할 금액을 선택해주세요');
-                        return false;
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(`환급 완료: ${result.value} 원`);
-                }
-            });
-
-            const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
-            refundRadios.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    document.getElementById('refund-amount').innerText = this.value;
-                });
-            });
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(`충전 완료: ${result.value} 원`);
         }
+    });
+
+    const chargeRadios = document.querySelectorAll('input[name="charge-amount"]');
+    chargeRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.getElementById('charge-amount').innerText = this.value;
+        });
+    });
+}
+
+function openRefundModal() {
+    Swal.fire({
+        title: 'Refund Cash',
+        html: `
+            <div class="points">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+            <div class="amounts">
+                <input type="radio" id="refund-10000" name="refund-amount" value="10000">
+                <label for="refund-10000">10,000</label>
+                <input type="radio" id="refund-20000" name="refund-amount" value="20000">
+                <label for="refund-20000">20,000</label>
+                <input type="radio" id="refund-30000" name="refund-amount" value="30000">
+                <label for="refund-30000">30,000</label>
+                <input type="radio" id="refund-50000" name="refund-amount" value="50000">
+                <label for="refund-50000">50,000</label>
+                <input type="radio" id="refund-100000" name="refund-amount" value="100000">
+                <label for="refund-100000">100,000</label>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '환급하기',
+        preConfirm: () => {
+            const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
+            if (selectedAmount) {
+                return selectedAmount.value;
+            } else {
+                Swal.showValidationMessage('환급할 금액을 선택해주세요');
+                return false;
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(`환급 완료: ${result.value} 원`);
+        }
+    });
+
+    const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
+    refundRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.getElementById('refund-amount').innerText = this.value;
+        });
+    });
+}
+
 
         window.onload = function() {
             document.getElementById('username').innerText = userData.username;
