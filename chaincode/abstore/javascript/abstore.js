@@ -228,7 +228,7 @@ const ABstore = class {
 
   async musicRegister(stub, args) {
     if (args.length != 3) {
-      throw new Error('Incorrect number of arguments. Expecting 3');
+        throw new Error('Incorrect number of arguments. Expecting 3');
     }
     let seller = args[0];
     let musicName = args[1];
@@ -237,53 +237,52 @@ const ABstore = class {
     let adminCash = "admin_cash";
 
     if (!seller) {
-      throw new Error('seller must not be empty');
+        throw new Error('seller must not be empty');
     }
 
     let sellerPointBytes = await stub.getState(seller + "_point");
     if (!sellerPointBytes || sellerPointBytes.length === 0) {
-      throw new Error('Failed to get state of seller points');
+        throw new Error('Failed to get state of seller points');
     }
     let sellerPoint = parseInt(sellerPointBytes.toString());
 
     let sellerCashBytes = await stub.getState(seller + "_cash");
     if (!sellerCashBytes || sellerCashBytes.length === 0) {
-      throw new Error('Failed to get state of seller cash');
+        throw new Error('Failed to get state of seller cash');
     }
     let sellerCash = parseInt(sellerCashBytes.toString());
 
     let adminPointBytes = await stub.getState(adminPoint);
     if (!adminPointBytes || adminPointBytes.length === 0) {
-      throw new Error('Failed to get state of admin points');
+        throw new Error('Failed to get state of admin points');
     }
     let adminPointVal = parseInt(adminPointBytes.toString());
 
     let adminCashBytes = await stub.getState(adminCash);
     if (!adminCashBytes || adminCashBytes.length === 0) {
-      throw new Error('Failed to get state of admin cash');
+        throw new Error('Failed to get state of admin cash');
     }
     let adminCashVal = parseInt(adminCashBytes.toString());
 
-    
     if (isNaN(price)) {
-      throw new Error('Expecting integer value for price');
+        throw new Error('Expecting integer value for price');
     }
 
     // Ensure seller has enough value to deduct the fee
     let fee = price * 0.02;
     if (sellerPoint + sellerCash < fee) {
-      throw new Error('seller does not have enough value to pay the fee');
+        throw new Error('seller does not have enough value to pay the fee');
     }
 
     // Deduct fee from POINT first, then from CASH if necessary
     if (sellerPoint >= fee) {
-      sellerPoint -= fee;
-      adminPointVal += fee;
+        sellerPoint -= fee;
+        adminPointVal += fee;
     } else {
-      let remainingFee = fee - sellerPoint;
-      sellerPoint = 0;
-      sellerCash -= remainingFee;
-      adminCashVal += remainingFee;
+        let remainingFee = fee - sellerPoint;
+        sellerPoint = 0;
+        sellerCash -= remainingFee;
+        adminCashVal += remainingFee;
     }
 
     // Seller's items 확인
@@ -295,7 +294,7 @@ const ABstore = class {
 
     // 음악과 가격을 객체 형태로 추가
     sellerItems.push({name: musicName, price: price});
-    await stub.putState(sellerItems + "_items", Buffer.from(JSON.stringify(sellerItems)));
+    await stub.putState(seller + "_items", Buffer.from(JSON.stringify(sellerItems)));
 
     console.info(util.format('sellerPoint = %d, sellerCash = %d, adminPointVal = %d, adminCashVal = %d\n', sellerPoint, sellerCash, adminPointVal, adminCashVal));
 
@@ -305,9 +304,9 @@ const ABstore = class {
     await stub.putState(adminPoint, Buffer.from(adminPointVal.toString()));
     await stub.putState(adminCash, Buffer.from(adminCashVal.toString()));
 
-    // Save the music information to the ledger
-    await stub.putState(musicName, Buffer.from(JSON.stringify({ seller: seller, price: price })));
-  }
+    return Buffer.from('Music registered successfully');
+}
+
 
   async buyMusic(stub, args) {
     if (args.length != 4) {
