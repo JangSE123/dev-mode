@@ -19,16 +19,16 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_init").show();
        });
    }
-   $scope.paymentAB = function(){
-    $("#success_payment").hide();
+   $scope.transferAB = function(){
+    $("#success_transfer").hide();
     let data = {
-        buyer : $scope.payment.buyer,
-        seller : $scope.payment.seller,
-        amount : $scope.payment.amount
+        sender : $scope.transfer.sender,
+        receiver : $scope.transfer.receiver,
+        amount : $scope.transfer.amount
     }
-        appFactory.paymentAB(data, function(response){
-            if(response=="") $scope.payment_ab = "success";
-            $("#success_payment").show();
+        appFactory.transferAB(data, function(response){
+            if(response=="") $scope.transfer_ab = "success";
+            $("#success_transfer").show();
         });
    }
    $scope.musicRegister = function(){
@@ -117,8 +117,8 @@ app.factory('appFactory', function($http){
             callback(output)
         });
     }
-    factory.paymentAB = function(data, callback){
-        $http.get('/payment?buyer='+data.buyer+'&seller='+data.seller+'&amount='+data.amount).success(function(output){
+    factory.transferAB = function(data, callback){
+        $http.get('/transfer?sender='+data.sender+'&receiver='+data.receiver+'&amount='+data.amount).success(function(output){
             callback(output.data)
         });
     }
