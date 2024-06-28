@@ -45,8 +45,7 @@ app.controller('AppCtrl', function($scope, appFactory){
         let data = {
             buyer : $scope.buyMusic.buyer,
             seller : $scope.buyMusic.seller,
-            sellerItem : $scope.buyMusic.sellerItem, 
-            price : $scope.buyMusic.price
+            sellerItem : $scope.buyMusic.sellerItem
         };
         appFactory.buyMusic(data, function(response){
             if(response == ""){
@@ -129,7 +128,7 @@ app.factory('appFactory', function($http){
         });
     }
     factory.buyMusic = function(data, callback){
-        $http.get('/buymusic?buyer='+data.buyer+'&seller='+data.seller+'&musicName='+data.sellerItem+'&price='+data.price).success(function(output){
+        $http.get('/buymusic?buyer='+data.buyer+'&seller='+data.seller+'&musicName='+data.sellerItem).success(function(output){
             callback(output);
         });
     };
