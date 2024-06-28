@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundtrack</title>
+    <style>
+        .box-wrap {
+            position: relative;
+            width: 100%;
+            height: 0;
+            overflow: hidden;
+            padding-bottom: 100%;
+        }
+
+        .box-wrap .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header .sign-in {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .track {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 80%;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .track img {
+            border-radius: 10px;
+            width: 150px;
+            height: 150px;
+            margin-right: 20px;
+        }
+
+        .track-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .track-info h2 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .track-info p {
+            margin: 5px 0;
+            color: gray;
+        }
+
+        .price {
+            text-align: center;
+            margin: 0 20px;
+        }
+
+        .price span {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .price button {
+            background-color: #f0f8ff;
+            border: 1px solid #000;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const musicList = JSON.parse(localStorage.getItem('musicList')) || [];
+            const contentDiv = document.querySelector('.content');
+
+            musicList.forEach(track => {
+                const trackDiv = document.createElement('div');
+                trackDiv.className = 'track';
+
+                trackDiv.innerHTML = `
+                    <div class="track-info">
+                        <h2>${track.title}</h2>
+                        <p>판매자: ${track.seller}</p>
+                        <p>음원 설명: ${track.description}</p>
+                    </div>
+                    <div class="price">
+                        <span>음원가격: ${track.price}</span>
+                        <button>구매</button>
+                    </div>
+                `;
+
+                contentDiv.appendChild(trackDiv);
+            });
+        };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">C</div>
+        <div class="menu">
+            <a href="index.html">Home</a>
+            <a href="ChargeCash.html">Charge Cash</a>
+            <a href="SoundTrack.html">Soundtrack</a>
+            <a href="MyPage.html">My Page</a>
+        </div>
+        <a href="Login.html" class="sign-in">Sign in</a>
+    </div>
+
+    <div class="content">
+        <h1>Soundtrack</h1>
+        <!-- Tracks will be dynamically inserted here -->
+    </div>
+
+    <div class="footer">
+        Company Name | Company .2022 © All Rights Reserved
+    </div>
+</body>
+</html>
