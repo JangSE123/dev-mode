@@ -67,6 +67,7 @@ app.controller('AppCtrl', function($scope, appFactory){
        $("#success_query").hide();
        appFactory.queryAB($scope.walletid, function(data){
            $scope.query_ab = data;
+
            $("#success_query").show();
        });
    }
