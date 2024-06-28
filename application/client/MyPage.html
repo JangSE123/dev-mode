@@ -323,6 +323,18 @@
                         document.getElementById('cash').innerText = userData.cash.toLocaleString();
                     } else {
                         Swal.fire('충전 완료', `${amount} 원 충전되었습니다.`, 'success')
+                            .then(() => {
+                                fetch(`/query?name=${encodeURIComponent(userData.name)}`, {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(updatedUserData => {
+                    // userData 업데이트
+                    userData = updatedUserData;
+                    // 페이지 새로고침
+                    location.reload();
+                })
+                            });
                     }
                 })
                 .catch(error => {
@@ -402,6 +414,18 @@
                         document.getElementById('cash').innerText = userData.cash.toLocaleString();
                     } else {
                         Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+                        .then(() => {
+                                fetch(`/query?name=${encodeURIComponent(userData.name)}`, {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(updatedUserData => {
+                    // userData 업데이트
+                    userData = updatedUserData;
+                    // 페이지 새로고침
+                    location.reload();
+                })
+                            });
                     }
                 })
                 .catch(error => {
