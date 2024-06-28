@@ -326,73 +326,81 @@
         }
 
         function openRefundModal() {
-            Swal.fire({
-                title: 'Refund Cash',
-                html: `
-                    <div class="point">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
-                    <div class="amounts">
-                        <input type="radio" id="refund-10000" name="refund-amount" value="10000">
-                        <label for="refund-10000">10,000</label>
-                        <input type="radio" id="refund-20000" name="refund-amount" value="20000">
-                        <label for="refund-20000">20,000</label>
-                        <input type="radio" id="refund-30000" name="refund-amount" value="30000">
-                        <label for="refund-30000">30,000</label>
-                        <input type="radio" id="refund-50000" name="refund-amount" value="50000">
-                        <label for="refund-50000">50,000</label>
-                        <input type="radio" id="refund-100000" name="refund-amount" value="100000">
-                        <label for="refund-100000">100,000</label>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '환급하기',
-                preConfirm: () => {
-                    const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
-                    if (selectedAmount) {
-                        return selectedAmount.value;
-                    } else {
-                        Swal.showValidationMessage('환급할 금액을 선택해주세요');
-                        return false;
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    refundCash(result.value);
-                }
-            });
-
-            const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
-            refundRadios.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    document.getElementById('refund-amount').innerText = this.value;
-                });
-            });
-        }
-        function refundCash(amount){
-            fetch('/refund',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user: userData.name, amount: amount })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('환급 완료',`${amount} 원 환급되었습니다.`, 'success')
-                    .then(()=>{
-                        location.reload();
-                    });
-                    userData.cash += parseInt(amount);
-                    document.getElementById('cash').innerText = userData.cash.toLocaleString();
+    Swal.fire({
+        title: 'Refund Cash',
+        html: `
+            <div class="point">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+            <div class="amounts">
+                <input type="radio" id="refund-10000" name="refund-amount" value="10000">
+                <label for="refund-10000">10,000</label>
+                <input type="radio" id="refund-20000" name="refund-amount" value="20000">
+                <label for="refund-20000">20,000</label>
+                <input type="radio" id="refund-30000" name="refund-amount" value="30000">
+                <label for="refund-30000">30,000</label>
+                <input type="radio" id="refund-50000" name="refund-amount" value="50000">
+                <label for="refund-50000">50,000</label>
+                <input type="radio" id="refund-100000" name="refund-amount" value="100000">
+                <label for="refund-100000">100,000</label>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '환급하기',
+        preConfirm: () => {
+            const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
+            if (selectedAmount) {
+                const refundAmount = parseInt(selectedAmount.value);
+                if (refundAmount > userData.cash) {
+                    Swal.showValidationMessage('보유 캐시 잔액보다 큰 금액은 환급할 수 없습니다.');
+                    return false;
                 } else {
-                    Swal.fire('환급 완료',`${amount} 원 환급되었습니다.`, 'success')
+                    return refundAmount.toString();
                 }
-            })
-            .catch(error => {
-                Swal.fire('환급 실패', '환급에 실패했습니다.', 'error');
-                console.error('Error:', error);
-            });
+            } else {
+                Swal.showValidationMessage('환급할 금액을 선택해주세요');
+                return false;
+            }
         }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            refundCash(result.value);
+        }
+    });
+
+    const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
+    refundRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.getElementById('refund-amount').innerText = this.value;
+        });
+    });
+}
+
+function refundCash(amount) {
+    fetch('/refund', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user: userData.name, amount: amount })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+            .then(() => {
+                location.reload();
+            });
+            userData.cash -= parseInt(amount);
+            document.getElementById('cash').innerText = userData.cash.toLocaleString();
+        } else {
+            Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+        }
+    })
+    .catch(error => {
+        Swal.fire('환급 실패', '환급에 실패했습니다.', 'error');
+        console.error('Error:', error);
+    });
+}
+
 
         // document.addEventListener('DOMContentLoaded', async function () {
         //     const username = 'a'; // 예시 사용자 이름, 필요 시 동적으로 변경
