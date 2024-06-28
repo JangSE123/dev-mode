@@ -8,7 +8,44 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header .sign-in {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
             background-color: #fff;
             color: #333;
         }
@@ -78,6 +115,16 @@
     </script>
 </head>
 <body>
+    <div class="header">
+        <div class="logo">C</div>
+        <div class="menu">
+            <a href="testmain.html">Home</a>
+            <a href="MusicRegister.html">MusicRegister</a>
+            <a href="SoundTrack.html">Soundtrack</a>
+            <a href="MyPage.html">My Page</a>
+        </div>
+        <a href="Login.html" class="sign-in">Sign in</a>
+    </div>
     <div class="form-container">
         <h2>Register Music</h2>
         <form id="musicForm" onsubmit="event.preventDefault(); registerMusic();">

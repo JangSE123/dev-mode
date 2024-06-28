@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGN UP</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #d5d8fc, #f9d6d6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 50px 30px;
+            width: 300px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background: #4a90e2;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #357ab8;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .options a {
+            color: #4a90e2;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SIGN UP</h1>
+        <div class="input-group">
+            <input type="text" placeholder="UserID">
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="Password">
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="Password check">
+        </div>
+        <button class="btn" onclick="btnRegister()">SIGN UP</button>
+        <div class="options">
+            <a href="Login.html">Do you have account?  Sign up</a>
+        </div>
+    </div>
+    <div class="footer">
+        Company Name | Company .2022 © All Rights Reserved
+    </div>
+</body>
+</html>
