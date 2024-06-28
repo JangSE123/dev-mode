@@ -129,13 +129,25 @@
             padding-bottom: 10px;
         }
 
-        .section ul {
-            list-style: none;
-            padding: 0;
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            overflow: hidden;
         }
 
-        .section li {
-            padding: 15px;
+        .grid-header {
+            font-weight: bold;
+            text-align: center;
+            background-color: #ddd;
+            padding-bottom: 10px;
+        }
+
+        .grid-item {
+            padding: 10px;
+            text-align: center;
             border-bottom: 1px solid #ddd;
         }
 
@@ -195,18 +207,27 @@
                     document.getElementById('cash').innerText = data.cash;
                     document.getElementById('point').innerText = data.point;
 
-                    userData={
+                    userData = {
                         name: data.walletID,
                         cash: data.cash,
                         point: data.point,
                         items: data.items
                     };
 
-                    const ownedTracksList = document.getElementById('owned-tracks-list');
-                    userData.items.forEach(track => {
-                        const li = document.createElement('li');
-                        li.textContent = track;
-                        ownedTracksList.appendChild(li);
+                    const ownedTracksGrid = document.getElementById('owned-tracks-grid');
+                    ownedTracksGrid.innerHTML = ''; // 기존 목록 초기화
+
+                    // Add headers
+                    ownedTracksGrid.innerHTML = `
+                        <div class="grid-header"}>음원명</div>
+                        <div class="grid-header">가격</div>
+                    `;
+
+                    data.items.forEach(track => {
+                        ownedTracksGrid.innerHTML += `
+                            <div class="grid-item">${track.name}</div>
+                            <div class="grid-item">${track.price.toLocaleString()}</div>
+                        `;
                     });
                 })
                 .catch(error => {
@@ -215,21 +236,6 @@
         }
 
         window.onload = loadSessionData;
-
-
-        // async function fetchUserData(username) {
-        //     try {
-        //         const response = await fetch(`/query?name=${userData.name}`);
-        //         if (!response.ok) {
-        //             throw new Error('Network response was not ok');
-        //         }
-        //         const data = await response.json();
-        //         return data;
-        //     } catch (error) {
-        //         console.error('Error fetching user data:', error);
-        //         return null;
-        //     }
-        // }
 
         function updatePageWithUserData(userData) {
             document.getElementById('username').innerText = userData.name;
@@ -241,7 +247,7 @@
             console.log(userData.name.toLocaleString());
             userData.forEach(track => {
                 const li = document.createElement('li');
-                li.innerText = track.name.toLocaleString() ;
+                li.innerText = track.name.toLocaleString();
                 ownedTracksList.appendChild(li);
             });
 
@@ -259,7 +265,7 @@
             Swal.fire({
                 title: 'Charge Cash',
                 html: `
-                    <div class="point">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+                    <div class="points">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
                     <div class="amounts">
                         <input type="radio" id="charge-5000" name="charge-amount" value="5000">
                         <label for="charge-5000">5,000</label>
@@ -306,30 +312,30 @@
                 },
                 body: JSON.stringify({ user: userData.name, amount: amount })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('충전 완료', `${amount} 원 충전되었습니다.`, 'success')
-                    .then(() => {
-                        location.reload(); // 페이지 새로고침
-                    });
-                    userData.cash += parseInt(amount);
-                    document.getElementById('cash').innerText = userData.cash.toLocaleString();
-                } else {
-                    Swal.fire('충전 완료', `${amount} 원 충전되었습니다.`, 'success')
-                }
-            })
-            .catch(error => {
-                Swal.fire('충전 실패', '충전에 실패했습니다.', 'error');
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('충전 완료', `${amount} 원 충전되었습니다.`, 'success')
+                            .then(() => {
+                                location.reload(); // 페이지 새로고침
+                            });
+                        userData.cash += parseInt(amount);
+                        document.getElementById('cash').innerText = userData.cash.toLocaleString();
+                    } else {
+                        Swal.fire('충전 완료', `${amount} 원 충전되었습니다.`, 'success')
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('충전 실패', '충전에 실패했습니다.', 'error');
+                    console.error('Error:', error);
+                });
         }
 
         function openRefundModal() {
-    Swal.fire({
-        title: 'Refund Cash',
-        html: `
-            <div class="point">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+            Swal.fire({
+                title: 'Refund Cash',
+                html: `
+                    <div class="points">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
             <div class="amounts">
                 <input type="radio" id="refund-10000" name="refund-amount" value="10000">
                 <label for="refund-10000">10,000</label>
@@ -343,89 +349,69 @@
                 <label for="refund-100000">100,000</label>
             </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: '환급하기',
-        preConfirm: () => {
-            const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
-            if (selectedAmount) {
-                const refundAmount = parseInt(selectedAmount.value);
-                if (refundAmount > userData.cash) {
-                    Swal.showValidationMessage('보유 캐시 잔액보다 큰 금액은 환급할 수 없습니다.');
-                    return false;
-                } else {
-                    return refundAmount.toString();
+                showCancelButton: true,
+                confirmButtonText: '환급하기',
+                preConfirm: () => {
+                    const selectedAmount = document.querySelector('input[name="refund-amount"]:checked');
+                    if (selectedAmount) {
+                        const refundAmount = parseInt(selectedAmount.value);
+                        if (refundAmount > userData.cash) {
+                            Swal.showValidationMessage('보유 캐시 잔액보다 큰 금액은 환급할 수 없습니다.');
+                            return false;
+                        } else {
+                            return refundAmount.toString();
+                        }
+                    } else {
+                        Swal.showValidationMessage('환급할 금액을 선택해주세요');
+                        return false;
+                    }
                 }
-            } else {
-                Swal.showValidationMessage('환급할 금액을 선택해주세요');
-                return false;
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            refundCash(result.value);
-        }
-    });
-
-    const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
-    refundRadios.forEach(radio => {
-        radio.addEventListener('change', function () {
-            document.getElementById('refund-amount').innerText = this.value;
-        });
-    });
-}
-
-function refundCash(amount) {
-    fetch('/refund', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ user: userData.name, amount: amount })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
-            .then(() => {
-                location.reload();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    refundCash(result.value);
+                }
             });
-            userData.cash -= parseInt(amount);
-            document.getElementById('cash').innerText = userData.cash.toLocaleString();
-        } else {
-            Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+
+            const refundRadios = document.querySelectorAll('input[name="refund-amount"]');
+            refundRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    document.getElementById('refund-amount').innerText = this.value;
+                });
+            });
         }
-    })
-    .catch(error => {
-        Swal.fire('환급 실패', '환급에 실패했습니다.', 'error');
-        console.error('Error:', error);
-    });
-}
 
+        function refundCash(amount) {
+            fetch('/refund', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user: userData.name, amount: amount })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+                            .then(() => {
+                                location.reload();
+                            });
+                        userData.cash -= parseInt(amount);
+                        document.getElementById('cash').innerText = userData.cash.toLocaleString();
+                    } else {
+                        Swal.fire('환급 완료', `${amount.toLocaleString()} 원 환급되었습니다.`, 'success')
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('환급 실패', '환급에 실패했습니다.', 'error');
+                    console.error('Error:', error);
+                });
+        }
 
-        // document.addEventListener('DOMContentLoaded', async function () {
-        //     const username = 'a'; // 예시 사용자 이름, 필요 시 동적으로 변경
-        //     const userDataFromServer = await fetchUserData(username);
-
-        //     if (userDataFromServer) {
-        //         userData = {
-        //             username: username,
-        //             cash: parseInt(userDataFromServer.cash),
-        //             point: parseInt(userDataFromServer.point),
-        //             ownedTracks: userDataFromServer.items,
-        //             transactionHistory: [
-        //                 '100,000 cash 충전 - 2024-01-15',
-        //                 '50,000 cash 환급 - 2024-01-10'
-        //             ]
-        //         };
-
-        //         updatePageWithUserData(userData);
-        //     }
-        // });
     </script>
 </head>
 
 <body>
-   <div class="header">
+    <div class="header">
         <div class="logo">C</div>
         <div class="menu">
             <a href="index.html">Home</a>
@@ -440,7 +426,7 @@ function refundCash(amount) {
         <div class="greeting">
             <h1><span id="username"></span>님, 환영합니다!</h1>
         </div>
-        
+
         <div class="info">
             <div>
                 <h2>현재 캐쉬</h2>
@@ -459,7 +445,7 @@ function refundCash(amount) {
 
         <div class="section">
             <h2>보유중인 음원</h2>
-            <ul id="owned-tracks-list"></ul>
+            <div class="grid" id="owned-tracks-grid"></div>
         </div>
 
         <div class="section">
