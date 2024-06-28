@@ -87,12 +87,16 @@ app.controller('AppCtrl', function($scope, appFactory){
     }
     $scope.rechargeAB = function(){
         $("#success_recharge").hide();
-        appFactory.rechargeAB($scope.recharge, function(data){
-          if(data == "")
-            $scope.recharge = "success";
-            $("#success_recharge").show();
+        let data = {
+            user: $scope.recharge.user,
+            amount: $scope.recharge.amount
+        };
+        appFactory.rechargeAB(data, function(response){
+            if(response == "")
+                $scope.recharge = "success";
+                $("#success_recharge").show();
         });
-      }
+    };
     $scope.refundAB = function(){
         $("#success_refund").hide();
         appFactory.refundAB($scope.refund, function(data){
@@ -142,11 +146,16 @@ app.factory('appFactory', function($http){
             callback(output)
         });
     }
+    // factory.rechargeAB = function(data, callback){
+    //     $http.get('/recharge?user='+data.user+'&amount='+data.amount).success(function(output){
+    //       callback(output)
+    //     });
+    // }
     factory.rechargeAB = function(data, callback){
-        $http.get('/recharge?user='+data.user+'&amount='+data.amount).success(function(output){
-          callback(output)
+        $http.post('/recharge', data).success(function(output){
+            callback(output);
         });
-    }
+    };
     factory.refundAB = function(data, callback){
         $http.get('/refund?user='+data.user+'&amount='+data.amount).success(function(output){
           callback(output)
