@@ -102,6 +102,7 @@ app.get('/query', async function (req, res) {
       let itemsResult = await sdk.query('query', itemsArgs);
 
       res.json({
+         walletID: name.toString(),
          cash: cashResult.toString(),
          point: pointResult.toString(),
          items: JSON.parse(itemsResult.toString())
