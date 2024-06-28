@@ -51,12 +51,12 @@ app.get('/invoke', function (req, res) {
    sdk.send(false, 'invoke', args, res);
 });
 
-app.get('/payment', function (req, res) {
-   let buyer = req.query.buyer;
-   let seller = req.query.seller;
+app.get('/transfer', function (req, res) {
+   let sender = req.query.sender;
+   let receiver = req.query.receiver;
    let amount = req.query.amount;
-   let args = [buyer, seller, amount];
-   sdk.send(false, 'payment', args, res);
+   let args = [sender, receiver, amount];
+   sdk.send(false, 'transfer', args, res);
 });
 
 app.get('/musicregister', function (req, res) {
