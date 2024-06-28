@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>Hyperledger Fabric AB Store</title>
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+
+   <style type="text/css">
+     header{
+       background-color: lightgray;
+       font-size:20px;
+       padding:20px;
+     }
+     header, .form-group{
+       margin-bottom: 3%;
+     }
+     .form-group{
+       width:50%;
+     }
+     #body{
+       margin-left:3%;
+       margin-right:3%;
+     }
+     .form-control{
+       margin: 8px;
+     }
+     label{
+       font-size:20px;
+     }
+   </style>
+ </head>
+ <body ng-app="application" ng-controller="AppCtrl">
+    <header>
+      <div id="left_header">Hyperledger Fabric AB Store Application</div>
+    </header>
+    <div id="body">
+      <div class="form-group">
+        <label>Init</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
+        <br>
+        ID: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.user">
+        <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Recharge</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_recharge">{{recharge}}</h5>
+        <br>
+        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="recharge.user">
+        <br>
+        Select Amount:
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="5000" ng-model="recharge.amount"> 5000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="10000" ng-model="recharge.amount"> 10000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="30000" ng-model="recharge.amount"> 30000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="50000" ng-model="recharge.amount"> 50000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="rechargeOption" value="100000" ng-model="recharge.amount"> 100000</label>
+        </div>
+        <br>
+        <input id="recharge" type="submit" value="Recharge" class="btn btn-primary" ng-click="rechargeAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Refund</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_refund">{{refund}}</h5>
+        <br>
+        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="refund.user">
+        <br>
+        Select Amount:
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="10000" ng-model="refund.amount"> 10000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="20000" ng-model="refund.amount"> 20000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="30000" ng-model="refund.amount"> 30000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="50000" ng-model="refund.amount"> 50000</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="refundOption" value="100000" ng-model="refund.amount"> 100000</label>
+        </div>
+        <br>
+        <input id="refund" type="submit" value="Refund" class="btn btn-primary" ng-click="refundAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Transfer</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_transfer">{{transfer_ab}}</h5>
+        <br>
+        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="transfer.sender">
+        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="transfer.receiver">
+        Point: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="transfer.amount">
+        <input id="transferAB" type="submit" value="Send" class="btn btn-primary" ng-click="transferAB()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Music Register</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
+        <br>
+        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.seller">
+        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.music">
+        Price: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="musicRegister.price">
+        <input id="musicRegister" type="submit" value="Send" class="btn btn-primary" ng-click="musicRegister()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <label>Buying Music</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
+        <br>
+        Buyer: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.buyer">
+        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.seller">
+        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.sellerItem">
+        <input id="buyMusic" type="submit" value="Send" class="btn btn-primary" ng-click="buyMusic()">
+      </div>
+      <hr>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
+        <label>User</label>
+        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
+        <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
+      </div>
+      <hr>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
+        <label>Admin</label>
+        <p><input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAdmin()"></p>
+      </div>
+      <hr>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_delete">{{delete_ab}}</h5>
+        <label>Delete</label>
+        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
+        <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="app.js"> </script>
+ </html>
+ 
