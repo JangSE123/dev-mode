@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const session = require('express-session');
 let path = require('path');
 let sdk = require('./sdk');
 
@@ -9,6 +10,13 @@ const HOST = '0.0.0.0';
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+   secret: 'admin', // 원하는 비밀키로 변경하세요.
+   resave: false,
+   saveUninitialized: true,
+   cookie: { secure: false } // HTTPS를 사용하는 경우 true로 설정하세요.
+}));
 
 app.get('/init', function (req, res) {
    let user = req.query.user;
@@ -36,8 +44,8 @@ app.post('/recharge', function (req, res) {
    let rechargeAmount = req.body.amount;
 
    if (!user || !rechargeAmount) {
-       res.status(400).send('User and recharge amount are required');
-       return;
+      res.status(400).send('User and recharge amount are required');
+      return;
    }
 
    let args = [user, rechargeAmount];
@@ -100,15 +108,28 @@ app.get('/query', async function (req, res) {
       let cashResult = await sdk.query('query', cashArgs);
       let pointResult = await sdk.query('query', pointArgs);
       let itemsResult = await sdk.query('query', itemsArgs);
+      
 
-      res.json({
+      // 세션에 저장
+      req.session.wallet = {
          walletID: name.toString(),
          cash: cashResult.toString(),
          point: pointResult.toString(),
          items: JSON.parse(itemsResult.toString())
-      });
+      };
+
+      res.json(req.session.wallet);
    } catch (error) {
       res.status(500).send(error.toString());
+   }
+});
+
+// 세션 데이터를 제공하는 엔드포인트
+app.get('/session', function (req, res) {
+   if (!req.session.wallet) {
+       res.status(404).send('No session data found');
+   } else {
+       res.json(req.session.wallet);
    }
 });
 
