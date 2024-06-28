@@ -295,7 +295,7 @@ const ABstore = class {
 
     // 음악과 가격을 객체 형태로 추가
     sellerItems.push({name: musicName, price: price});
-
+    await stub.putState(sellerItems + "_items", Buffer.from(JSON.stringify(sellerItems)));
 
     console.info(util.format('sellerPoint = %d, sellerCash = %d, adminPointVal = %d, adminCashVal = %d\n', sellerPoint, sellerCash, adminPointVal, adminCashVal));
 
