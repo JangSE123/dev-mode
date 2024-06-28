@@ -198,11 +198,12 @@
                     userData={
                         name: data.walletID,
                         cash: data.cash,
-                        point: data.point
+                        point: data.point,
+                        items: data.items
                     };
 
                     const ownedTracksList = document.getElementById('owned-tracks-list');
-                    data.items.forEach(track => {
+                    userData.items.forEach(track => {
                         const li = document.createElement('li');
                         li.textContent = track;
                         ownedTracksList.appendChild(li);
@@ -237,9 +238,10 @@
 
             const ownedTracksList = document.getElementById('owned-tracks-list');
             ownedTracksList.innerHTML = ''; // 기존 목록 초기화
-            userData.ownedTracks.forEach(track => {
+            console.log(userData.name.toLocaleString());
+            userData.forEach(track => {
                 const li = document.createElement('li');
-                li.innerText = track;
+                li.innerText = track.name.toLocaleString() ;
                 ownedTracksList.appendChild(li);
             });
 
@@ -302,7 +304,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user: userData.walletID, amount: amount })
+                body: JSON.stringify({ user: userData.name, amount: amount })
             })
             .then(response => response.json())
             .then(data => {
