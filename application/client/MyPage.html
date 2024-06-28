@@ -179,24 +179,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
     <script>
-        let userData = null; // 전역 변수로 userData 선언
 
-        async function fetchUserData(username) {
-            try {
-                const response = await fetch(`/query?name=${username}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                return null;
-            }
+        let userData = {};
+
+        function loadSessionData() {
+            fetch('/session')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No session data found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('username').innerText = data.walletID;
+                    document.getElementById('cash').innerText = data.cash;
+                    document.getElementById('point').innerText = data.point;
+
+                    userData={
+                        name: data.walletID,
+                        cash: data.cash,
+                        point: data.point
+                    };
+
+                    const ownedTracksList = document.getElementById('owned-tracks-list');
+                    data.items.forEach(track => {
+                        const li = document.createElement('li');
+                        li.textContent = track;
+                        ownedTracksList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
 
+        window.onload = loadSessionData;
+
+
+        // async function fetchUserData(username) {
+        //     try {
+        //         const response = await fetch(`/query?name=${userData.name}`);
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         const data = await response.json();
+        //         return data;
+        //     } catch (error) {
+        //         console.error('Error fetching user data:', error);
+        //         return null;
+        //     }
+        // }
+
         function updatePageWithUserData(userData) {
-            document.getElementById('username').innerText = userData.username;
+            document.getElementById('username').innerText = userData.name;
             document.getElementById('cash').innerText = userData.cash.toLocaleString();
             document.getElementById('point').innerText = userData.point.toLocaleString();
 
@@ -222,7 +257,7 @@
             Swal.fire({
                 title: 'Charge Cash',
                 html: `
-                    <div class="points">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+                    <div class="point">충전할 캐시: <span id="charge-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
                     <div class="amounts">
                         <input type="radio" id="charge-5000" name="charge-amount" value="5000">
                         <label for="charge-5000">5,000</label>
@@ -267,7 +302,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user: userData.username, amount: amount })
+                body: JSON.stringify({ user: userData.walletID, amount: amount })
             })
             .then(response => response.json())
             .then(data => {
@@ -292,7 +327,7 @@
             Swal.fire({
                 title: 'Refund Cash',
                 html: `
-                    <div class="points">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
+                    <div class="point">환급할 캐시: <span id="refund-amount">0</span> 현재 캐시: ${userData.cash.toLocaleString()}</div>
                     <div class="amounts">
                         <input type="radio" id="refund-10000" name="refund-amount" value="10000">
                         <label for="refund-10000">10,000</label>
@@ -331,25 +366,25 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', async function () {
-            const username = 'a'; // 예시 사용자 이름, 필요 시 동적으로 변경
-            const userDataFromServer = await fetchUserData(username);
+        // document.addEventListener('DOMContentLoaded', async function () {
+        //     const username = 'a'; // 예시 사용자 이름, 필요 시 동적으로 변경
+        //     const userDataFromServer = await fetchUserData(username);
 
-            if (userDataFromServer) {
-                userData = {
-                    username: username,
-                    cash: parseInt(userDataFromServer.cash),
-                    point: parseInt(userDataFromServer.point),
-                    ownedTracks: userDataFromServer.items,
-                    transactionHistory: [
-                        '100,000 cash 충전 - 2024-01-15',
-                        '50,000 cash 환급 - 2024-01-10'
-                    ]
-                };
+        //     if (userDataFromServer) {
+        //         userData = {
+        //             username: username,
+        //             cash: parseInt(userDataFromServer.cash),
+        //             point: parseInt(userDataFromServer.point),
+        //             ownedTracks: userDataFromServer.items,
+        //             transactionHistory: [
+        //                 '100,000 cash 충전 - 2024-01-15',
+        //                 '50,000 cash 환급 - 2024-01-10'
+        //             ]
+        //         };
 
-                updatePageWithUserData(userData);
-            }
-        });
+        //         updatePageWithUserData(userData);
+        //     }
+        // });
     </script>
 </head>
 
