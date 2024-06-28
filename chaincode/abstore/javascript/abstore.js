@@ -84,7 +84,7 @@ const ABstore = class {
     return Buffer.from('Refund successful');
   }
 
-  async Payment(stub) {
+  async Transfer(stub) {
     console.log("========= Add Cash =========");
     console.info(ret);
     let method = this[ret.fcn];
@@ -139,91 +139,49 @@ const ABstore = class {
     await stub.putState(user + "_items", Buffer.from(user_items));
   }
 
-  async payment(stub, args) {
+  async transfer(stub, args) {
     if (args.length != 3) {
       throw new Error('Incorrect number of arguments. Expecting 3');
     }
 
-    let buyer = args[0];
-    let seller = args[1];
+    let sender = args[0];
+    let receiver = args[1];
     let amount = parseInt(args[2]);
-    let adminCash = 'admin_cash';
-    let adminPoint = 'admin_point';
 
-    if (!buyer || !seller || isNaN(amount)) {
-      throw new Error('Invalid arguments. Expecting buyer, seller, and amount');
+    if (!sender || !receiver || isNaN(amount)) {
+      throw new Error('Invalid arguments. Expecting sender, receiver, and amount');
     } 
 
-    let buyerCashBytes = await stub.getState(buyer + "_cash");
-    let buyerPointBytes = await stub.getState(buyer + "_point");
-    if (!buyerCashBytes || buyerCashBytes.length === 0 || !buyerPointBytes || buyerPointBytes.length === 0) {
-      throw new Error('Failed to get state of buyer');
+    let senderPointBytes = await stub.getState(sender + "_point");
+    if (!senderPointBytes || senderPointBytes.length === 0) {
+      throw new Error('Failed to get state of sender');
     }
 
-    let buyerCash = parseInt(buyerCashBytes.toString());
-    let buyerPoint = parseInt(buyerPointBytes.toString());
+    let senderPoint = parseInt(senderPointBytes.toString());
 
-    let sellerCashBytes = await stub.getState(seller + "_cash");
-    let sellerPointBytes = await stub.getState(seller + "_point");
-    if (!sellerCashBytes || sellerCashBytes.length === 0 || !sellerPointBytes || sellerPointBytes.length === 0) {
-      throw new Error('Failed to get state of seller');
+    let receiverPointBytes = await stub.getState(receiver + "_point");
+    if (!receiverPointBytes || receiverPointBytes.length === 0) {
+      throw new Error('Failed to get state of receiver');
     }
 
-    let sellerCash = parseInt(sellerCashBytes.toString());
-    let sellerPoint = parseInt(sellerPointBytes.toString());
+    let receiverPoint = parseInt(receiverPointBytes.toString());
 
-    let adminCashBytes = await stub.getState(adminCash);
-    let adminPointBytes = await stub.getState(adminPoint);
-    if (!adminCashBytes || adminCashBytes.length === 0 || !adminPointBytes || adminPointBytes.length === 0) {
-      throw new Error('Failed to get state of admin');
-    }
-    let adminCashVal = parseInt(adminCashBytes.toString());
-    let adminPointVal = parseInt(adminPointBytes.toString());
-
-    // Purchase using points first, then cash if necessary
-    let remainAmount = amount;
-
-    if (buyerPoint >= remainAmount) {
-      buyerPoint -= remainAmount;
-      remainAmount = 0;
-    } else {
-      remainAmount -= buyerPoint;
-      buyerPoint = 0;
+    if (senderPoint < amount) {
+      throw new Error(sender + ' does not have enough points');
     }
 
-    // Remaining amount is paid in cash, and 5% of cash payment is added as points
-    let promotionPoint = 0;
-    if (remainAmount > 0) {
-      if (buyerCash >= remainAmount) {
-        buyerCash -= remainAmount;
-        adminCashVal += remainAmount;
+    // Deduct the amount from sender's points
+    senderPoint -= amount;
+    receiverPoint += amount * 0.9;
 
-        promotionPoint = Math.floor(remainAmount * 0.05);
-        buyerPoint += promotionPoint;
-        remainAmount = 0;
-      } else {
-        throw new Error(buyer + ' does not have enough cash');
-      }
-    }
+    await stub.putState(sender + "_point", Buffer.from(senderPoint.toString()));
+    await stub.putState(receiver + "_point", Buffer.from(receiverPoint.toString()));
 
-    // Deduct tax from amount and transfer the remaining to the seller
-    let tax = Math.floor(amount * 0.1);
-    let totalPrice = amount - tax;
-
-    adminCashVal -= totalPrice;
-    sellerCash += totalPrice;
-
-    console.info(util.format('Buyer Cash = %d, Buyer Points = %d, Seller Cash = %d, Seller Points = %d, Admin Cash = %d, Admin Points = %d', buyerCash, buyerPoint, sellerCash, sellerPoint, adminCashVal, adminPointVal));
-
-    await stub.putState(buyer + "_cash", Buffer.from(buyerCash.toString()));
-    await stub.putState(buyer + "_point", Buffer.from(buyerPoint.toString()));
-    await stub.putState(seller + "_cash", Buffer.from(sellerCash.toString()));
-    await stub.putState(seller + "_point", Buffer.from(sellerPoint.toString()));
-    await stub.putState(adminCash, Buffer.from(adminCashVal.toString()));
-    await stub.putState(adminPoint, Buffer.from(adminPointVal.toString()));
+    console.info(util.format('Sender Points = %d, Receiver Points = %d', senderPoint, receiverPoint));
 
     return Buffer.from('Transaction successful');
   }
+
 
 
   async musicRegister(stub, args) {

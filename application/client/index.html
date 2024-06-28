@@ -98,13 +98,13 @@
       </div>
       <hr>
       <div class="form-group">
-        <label>Payment</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_payment">{{payment_ab}}</h5>
+        <label>Transfer</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_transfer">{{transfer_ab}}</h5>
         <br>
-        Buyer: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="payment.buyer">
-        Seller: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="payment.seller">
-        Amount: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="payment.amount">
-        <input id="paymentAB" type="submit" value="Send" class="btn btn-primary" ng-click="paymentAB()">
+        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="transfer.sender">
+        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="transfer.receiver">
+        Point: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="transfer.amount">
+        <input id="transferAB" type="submit" value="Send" class="btn btn-primary" ng-click="transferAB()">
       </div>
       <hr>
       <div class="form-group">
