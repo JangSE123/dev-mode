@@ -52,9 +52,9 @@ app.post('/recharge', function (req, res) {
    sdk.send(false, 'recharge', args, res);
 });
 
-app.get('/refund', function (req, res) {
-   let user = req.query.user;
-   let refundAmount = req.query.amount;
+app.post('/refund', function (req, res) {
+   let user = req.body.user;
+   let refundAmount = req.body.amount;
 
    if (!user || !refundAmount) {
       res.status(400).send('User and recharge amount are required');

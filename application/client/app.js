@@ -100,8 +100,12 @@ app.controller('AppCtrl', function($scope, appFactory){
     };
     $scope.refundAB = function(){
         $("#success_refund").hide();
-        appFactory.refundAB($scope.refund, function(data){
-            if(data == "")
+        let data = {
+            user: $scope.refund.user,
+            amount: $scope.refund.amount
+        }
+        appFactory.refundAB(data, function(response){
+            if(response == "")
             $scope.refund = "success";
             $("#success_refund").show();
         });
@@ -156,9 +160,9 @@ app.factory('appFactory', function($http){
         $http.post('/recharge', data).success(function(output){
             callback(output);
         });
-    };
+    }
     factory.refundAB = function(data, callback){
-        $http.get('/refund?user='+data.user+'&amount='+data.amount).success(function(output){
+        $http.get('/refund',data).success(function(output){
           callback(output)
         });
     }

@@ -319,7 +319,7 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire(`환급 완료: ${result.value} 원`);
+                    refundCash(result.value);
                 }
             });
 
@@ -330,7 +330,32 @@
                 });
             });
         }
-
+        function refundCash(amount){
+            fetch('/refund',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user: userData.username, amount: amount })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('완료',`${amount} 원 되었습니다.`, 'success')
+                    .then(()=>{
+                        location.reload();
+                    });
+                    userData.cash += parseInt(amount);
+                    document.getElementById('cash').innerText = userData.cash.toLocaleString();
+                } else {
+                    Swal.fire('실패', '실패했습니다.', 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('충전 실패', '충전에 실패했습니다.', 'error');
+                console.error('Error:', error);
+            });
+        }
         document.addEventListener('DOMContentLoaded', async function () {
             const username = 'a'; // 예시 사용자 이름, 필요 시 동적으로 변경
             const userDataFromServer = await fetchUserData(username);
@@ -358,7 +383,7 @@
         <div class="logo">C</div>
         <div class="menu">
             <a href="index.html">Home</a>
-            <a href="ChargeCash.html">Charge Cash</a>
+            <a href="MusicRegister.html">MusicRegister</a>
             <a href="SoundTrack.html">Soundtrack</a>
             <a href="MyPage.html">My Page</a>
         </div>
