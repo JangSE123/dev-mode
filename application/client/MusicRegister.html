@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Register</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -114,7 +117,7 @@
         }
     </script>
 </head>
-<body>
+<body ng-app="application" ng-controller="AppCtrl">
     <div class="header">
         <div class="logo">C</div>
         <div class="menu">
@@ -126,31 +129,32 @@
         <a href="Login.html" class="sign-in">Sign in</a>
     </div>
     <div class="form-container">
-        <h2>Register Music</h2>
+        <label>Music Register</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
+        <br>
         <form id="musicForm" onsubmit="event.preventDefault(); registerMusic();">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            <div class="form-group">
-                <label for="seller">Seller</label>
-                <input type="text" id="seller" name="seller" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="price">Price</label>
-                <input type="number" id="price" name="price" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">Register</button>
-            </div>
-        </form>
+        <div class="form-group">
+            <label for="seller">Seller</label>
+            <input type="text" id="seller" name="seller" ng-model="musicRegister.seller" required>
+        </div>
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" ng-model="musicRegister.music" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" ng-model="musicRegister.price" required>
+        </div>
+        <input id="musicRegister" type="submit" value="Send" class="btn btn-primary" ng-click="musicRegister()">
+    </form>  
     </div>
     <div class="footer">
         Company Name | Company .2022 © All Rights Reserved
     </div>
 </body>
+<script type="text/javascript" src="app.js"> </script>
 </html>

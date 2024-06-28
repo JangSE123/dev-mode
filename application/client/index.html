@@ -1,153 +1,147 @@
 <!DOCTYPE html>
-<html>
- <head>
-   <title>Hyperledger Fabric AB Store</title>
-
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-
-   <style type="text/css">
-     header{
-       background-color: lightgray;
-       font-size:20px;
-       padding:20px;
-     }
-     header, .form-group{
-       margin-bottom: 3%;
-     }
-     .form-group{
-       width:50%;
-     }
-     #body{
-       margin-left:3%;
-       margin-right:3%;
-     }
-     .form-control{
-       margin: 8px;
-     }
-     label{
-       font-size:20px;
-     }
-   </style>
- </head>
- <body ng-app="application" ng-controller="AppCtrl">
-    <header>
-      <div id="left_header">Hyperledger Fabric AB Store Application</div>
-    </header>
-    <div id="body">
-      <div class="form-group">
-        <label>Init</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
-        <br>
-        ID: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.user">
-        <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <label>Recharge</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_recharge">{{recharge}}</h5>
-        <br>
-        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="recharge.user">
-        <br>
-        Select Amount:
-        <div class="radio">
-          <label><input type="radio" name="rechargeOption" value="5000" ng-model="recharge.amount"> 5000</label>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음원 거래 플랫폼</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+        .header a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header .menu {
+            display: flex;
+        }
+        .header .sign-in {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .container {
+            text-align: left;
+            padding: 50px 20px;
+        }
+        .container h1 {
+            color: #ff00ff;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .container p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 20px 0;
+            color: #666;
+        }
+        .container .button {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 18px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .highlight {
+            background-color: #f8f8f8;
+            padding: 40px 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .highlight .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .highlight .song {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .highlight .song img {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+        .highlight .song .details {
+            text-align: left;
+            max-width: 300px;
+        }
+        .highlight .song .details .artist {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .highlight .song .details .info {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #666;
+        }
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">C</div>
+        <div class="menu">
+            <a href="testmain.html">Home</a>
+            <a href="MusicRegister.html">MusicRegister</a>
+            <a href="SoundTrack.html">Soundtrack</a>
+            <a href="MyPage.html">My Page</a>
         </div>
-        <div class="radio">
-          <label><input type="radio" name="rechargeOption" value="10000" ng-model="recharge.amount"> 10000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="rechargeOption" value="30000" ng-model="recharge.amount"> 30000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="rechargeOption" value="50000" ng-model="recharge.amount"> 50000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="rechargeOption" value="100000" ng-model="recharge.amount"> 100000</label>
-        </div>
-        <br>
-        <input id="recharge" type="submit" value="Recharge" class="btn btn-primary" ng-click="rechargeAB()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <label>Refund</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_refund">{{refund}}</h5>
-        <br>
-        User: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="refund.user">
-        <br>
-        Select Amount:
-        <div class="radio">
-          <label><input type="radio" name="refundOption" value="10000" ng-model="refund.amount"> 10000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="refundOption" value="20000" ng-model="refund.amount"> 20000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="refundOption" value="30000" ng-model="refund.amount"> 30000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="refundOption" value="50000" ng-model="refund.amount"> 50000</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="refundOption" value="100000" ng-model="refund.amount"> 100000</label>
-        </div>
-        <br>
-        <input id="refund" type="submit" value="Refund" class="btn btn-primary" ng-click="refundAB()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <label>Transfer</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_transfer">{{transfer_ab}}</h5>
-        <br>
-        Sender: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="transfer.sender">
-        Receiver: <input class="form-control" type="text" placeholder="Ex: Ledger" ng-model="transfer.receiver">
-        Point: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="transfer.amount">
-        <input id="transferAB" type="submit" value="Send" class="btn btn-primary" ng-click="transferAB()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <label>Music Register</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
-        <br>
-        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.seller">
-        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="musicRegister.music">
-        Price: <input class="form-control" type="text" placeholder="Ex: 10" ng-model="musicRegister.price">
-        <input id="musicRegister" type="submit" value="Send" class="btn btn-primary" ng-click="musicRegister()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <label>Buying Music</label>
-        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
-        <br>
-        Buyer: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.buyer">
-        Seller: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.seller">
-        Music: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="buyMusic.sellerItem">
-        <input id="buyMusic" type="submit" value="Send" class="btn btn-primary" ng-click="buyMusic()">
-      </div>
-      <hr>
-      <div class="form-group">
-        <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
-        <label>User</label>
-        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
-        <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
-      </div>
-      <hr>
-      <div class="form-group">
-        <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
-        <label>Admin</label>
-        <p><input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAdmin()"></p>
-      </div>
-      <hr>
-      <div class="form-group">
-        <h5 style="color:green;margin-bottom:2%" id="success_delete">{{delete_ab}}</h5>
-        <label>Delete</label>
-        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
-        <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
-      </div>
+        <a href="Login.html" class="sign-in">Sign in</a>
     </div>
-  </body>
-  <script type="text/javascript" src="app.js"> </script>
- </html>
- 
+    <div class="container">
+        <h1>국내 최고의 음원거래 플랫폼 서비스</h1>
+        <p>한국 최고의 음원 거래 플랫폼을 블록체인 기술을 통해 혁신하고 있습니다. 저희는 아티스트와 이용자 모두가 공정하게 혜택을 받을 수 있는 새로운 문화를 만들어가고 있습니다. 블록체인의 투명성과 안전성을 바탕으로, 음악 산업의 미래를 함께 만들어가는 여정에 여러분을 초대합니다.</p>
+        <a href="#" class="button">음원거래 바로가기</a>
+    </div>
+    <div class="highlight">
+        <div class="title">오늘 가장 비싸게 팔린 음원</div>
+        <div class="song">
+            <img src="path_to_ak47_image.jpg" alt="Ak47">
+            <div class="details">
+                <div class="artist">Ak47</div>
+                <div class="info">아티스트명 Men's Tear(맨스티어)</div>
+                <div class="info">작사 KSAP RAMA, Poison Mushroom</div>
+                <div class="info">작곡 KSAP RAMA, Poison Mushroom, 시네루(SINERU)</div>
+                <div class="info">편곡 시네루(SINERU), 고래(GORAE)</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        Company Name | Company .2022 © All Rights Reserved
+    </div>
+</body>
+</html>
