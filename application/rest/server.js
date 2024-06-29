@@ -20,8 +20,8 @@ app.use(session({
 
 // 음악 리스트를 저장할 변수
 let musicList = [
-   { title: 'Song 1', seller: 'admin', description: 'TEST SONG 1', price: 1000 },
-   { title: 'Song 2', seller: 'admin', description: 'TEST SONG 2', price: 2000 },
+   { title: 'Song 1', seller: 'admin', description: 'TEST SONG 1', price: 15000 },
+   { title: 'Song 2', seller: 'admin', description: 'TEST SONG 2', price: 20000 },
    // 초기 음악 리스트 데이터
 ];
 

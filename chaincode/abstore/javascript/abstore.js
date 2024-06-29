@@ -14,8 +14,8 @@ const ABstore = class {
     console.info('========= ABstore Init =========');
     let ret = stub.getFunctionAndParameters();
     let defaultItems = [
-      { name: "song1", price: 1500 },
-      { name: "song2", price: 1000 }
+      { name: "Song 1", price: 15000 },
+      { name: "Song 2", price: 20000 }
   ];
     let items = JSON.stringify(defaultItems);
     console.info(ret);
