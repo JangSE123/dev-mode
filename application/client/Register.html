@@ -89,7 +89,9 @@
         <h1>SIGN UP</h1>
         <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
         <div class="form-group">
-            <input class="form-control" type="text" placeholder="UserID" ng-model="abstore.user">
+            <input class="form-control" type="text" placeholder="UserID" ng-model="abstore.user" required>
+        </div>
+        <div>
             <input id="initAB" type="submit" value="SIGN UP" class="btn" ng-click="initAB()">
         </div>
         <div class="options">
@@ -99,6 +101,7 @@
     <div class="footer">
         Company Name | Company .2022 © All Rights Reserved
     </div>
+    <script type="text/javascript" src="app.js"></script>
 </body>
-<script type="text/javascript" src="app.js"> </script>
+
 </html>
