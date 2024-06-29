@@ -123,6 +123,23 @@ app.get('/buymusic', function (req, res) {
    sdk.send(false, 'buyMusic', args, res);
 });
 
+app.post('/buymusic', function(req, res) {
+   const targetName = req.body.title;
+
+   if (!targetName) {
+      res.status(400).send('음악 제목(TargetName)이 필요합니다');
+      return;
+   }
+
+   const index = musicList.findIndex(music => music.title === targetName);
+   if (index !== -1) {
+      musicList.splice(index, 1);
+      res.status(201).send('음악 전송 성공');
+   } else {
+      res.status(404).send('해당 제목의 음악을 찾을 수 없습니다');
+   }
+});
+
 app.get('/query', async function (req, res) {
    try {
       let name = req.query.name;
