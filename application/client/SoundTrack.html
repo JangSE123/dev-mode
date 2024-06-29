@@ -155,15 +155,34 @@
                             </div>
                             <div class="price">
                                 <span>음원가격: ${track.price}원</span>
-                                <button>구매</button>
+                                <button data-title="${track.title}" data-seller="${track.seller}" data-price="${track.price}">선택</button>
                             </div>
                         `;
 
                         contentDiv.appendChild(trackDiv);
                     });
+
+                    // Add event listeners to all purchase buttons
+                    document.querySelectorAll('.price button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const title = this.getAttribute('data-title');
+                            const seller = this.getAttribute('data-seller');
+                            const price = this.getAttribute('data-price');
+
+                            document.querySelector('input[ng-model="buyMusic.sellerItem"]').value = title;
+                            document.querySelector('input[ng-model="buyMusic.seller"]').value = seller;
+                            // Assuming there is a logged-in user, set the buyer field
+                            // Otherwise, this field should be filled by the user manually
+                            document.querySelector('input[ng-model="buyMusic.buyer"]').value = 'Current Logged-In User';
+                        });
+                    });
                 })
                 .catch(error => console.error('Error fetching music list:', error));
         };
+
+        function inputvalue(){
+            
+        }
     </script>
 
 </head>
@@ -186,9 +205,9 @@
             <label>Buying Music</label>
             <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
             <br>
-            Buyer: <input class="form-control" type="text" value="a" ng-model="buyMusic.buyer">
-            Seller: <input class="form-control" type="text" value="${track.seller}" ng-model="buyMusic.seller">
-            Music: <input class="form-control" type="text" value="${track.title}" ng-model="buyMusic.sellerItem">
+            Buyer: <input class="form-control" type="text" ng-model="buyMusic.buyer">
+            Seller: <input class="form-control" type="text" ng-model="buyMusic.seller">
+            Music: <input class="form-control" type="text" ng-model="buyMusic.sellerItem">
             <input id="buyMusic" type="submit" value="구매하기" class="btn btn-primary" ng-click="buyMusic()">
           </div>
     </div>
@@ -200,4 +219,3 @@
 
 <script type="text/javascript" src="app.js"> </script>
 </html>
-
