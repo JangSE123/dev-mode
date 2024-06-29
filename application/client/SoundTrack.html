@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundtrack</title>
+
     <style>
         .box-wrap {
             position: relative;
@@ -132,6 +133,9 @@
             margin-top: 20px;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
     <script>
         window.onload = function() {
             fetch('/musiclist')
@@ -163,7 +167,7 @@
     </script>
 
 </head>
-<body>
+<body ng-app="application" ng-controller="AppCtrl">
     <div class="header">
         <div class="logo">C</div>
         <div class="menu">
@@ -178,10 +182,22 @@
     <div class="content">
         <h1>Soundtrack</h1>
         <!-- Tracks will be dynamically inserted here -->
+        <div class="form-group">
+            <label>Buying Music</label>
+            <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
+            <br>
+            Buyer: <input class="form-control" type="text" value="a" ng-model="buyMusic.buyer">
+            Seller: <input class="form-control" type="text" value="${track.seller}" ng-model="buyMusic.seller">
+            Music: <input class="form-control" type="text" value="${track.title}" ng-model="buyMusic.sellerItem">
+            <input id="buyMusic" type="submit" value="구매하기" class="btn btn-primary" ng-click="buyMusic()">
+          </div>
     </div>
 
     <div class="footer">
         Company Name | Company .2022 © All Rights Reserved
     </div>
 </body>
+
+<script type="text/javascript" src="app.js"> </script>
 </html>
+
