@@ -300,7 +300,7 @@ async buyMusic(stub, args) {
 
   let adminCash = 'admin_cash';
   let adminPoint = 'admin_point';
-
+ 
   let adminCashBytes = await stub.getState(adminCash);
   let adminPointBytes = await stub.getState(adminPoint);
   if (!adminCashBytes || adminCashBytes.length === 0 || !adminPointBytes || adminPointBytes.length === 0) {

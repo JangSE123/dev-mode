@@ -89,7 +89,7 @@ app.get('/transfer', function (req, res) {
    sdk.send(false, 'transfer', args, res);
 });
 
-app.get('/musicregister', function (req, res) {
+app.get('/musicregister', function (req, res) { 
    let seller = req.query.seller;
    let music = req.query.music;
    let price = req.query.price;
