@@ -8,108 +8,111 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fff;
-            color: #333;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .header a {
-            text-decoration: none;
-            color: #000;
-            margin: 0 15px;
-            font-size: 16px;
-        }
-
-        .header nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-        }
-
-        .header .sign-in {
-            background-color: #f8f8f8;
-            border: 1px solid #ccc;
-            padding: 5px 15px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .form-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #f8f8f8;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #333;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 95%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-        }
-
-        .musicRegister {
-            width: 99%;
-            padding: 10px;
-            background-color: #337ab7;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .musicRegister:hover {
-            background-color: #286090;
-        }
-
-        .footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        color: #333;
+    }
+    
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .header a {
+        text-decoration: none;
+        color: #000;
+        margin: 0 15px;
+        font-size: 16px;
+    }
+    
+    .header nav a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+    }
+    
+    .header .sign-in {
+        background-color: #f8f8f8;
+        border: 1px solid #ccc;
+        padding: 5px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 16px;
+    }
+    
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f8f8;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 95%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+        font-family: Arial, sans-serif; /* Ensure the font is consistent */
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+    }
+    
+    .musicRegister {
+        width: 99%;
+        padding: 10px;
+        background-color: #337ab7;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+    
+    .musicRegister:hover {
+        background-color: #286090;
+    }
+    
+    .footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+    }
     </style>
 
 
@@ -153,24 +156,33 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ title, seller, description, price })
-                }).then(response => {
-                    return fetch(`/musicregister?seller=${encodeURIComponent(seller)}&music=${encodeURIComponent(title)}&price=${encodeURIComponent(price)}`, {
-                        method: 'GET'
-                    });
+                })
+                fetch(`/musicregister?seller=${encodeURIComponent(seller)}&music=${encodeURIComponent(title)}&price=${encodeURIComponent(price)}`, {
+                    method: 'GET'
                 }).then(response => {
                     if (response.ok) {
-                        alert('Music registered successfully!');
+                        Swal.fire('Music registered successfully!', '', 'success')
+                            .then(() => {
+                                fetch(`/query?name=${encodeURIComponent(userData.name)}`, {
+                                    method: 'GET'
+                                })
+                                    .then(response => response.json())
+                                    .then(updatedUserData => {
+                                        userData = updatedUserData;
+                                        location.href = 'MyPage.html';
+                                    });
+                            });
                         document.getElementById('musicForm').reset();
-                        window.location.href = 'SoundTrack.html'; // 음악 등록 후 SoundTrack.html로 이동
                     } else {
-                        alert('Failed to register music');
+                        Swal.fire('Failed to register music', '', 'error');
                     }
-                }).catch(error => {
-                    console.error('Error registering music:', error);
-                    alert('Error registering music');
-                });
+                })
+                    .catch(error => {
+                        console.error('Error registering music:', error);
+                        Swal.fire('Error registering music', '', 'error');
+                    });
             } else {
-                alert('Please fill in all fields.');
+                Swal.fire('Please fill in all fields.', '', 'warning');
             }
         }
     </script>
@@ -192,12 +204,10 @@
     </div>
     <div class="form-container">
         <h2 style="text-align: center;">Music Register</h2>
-        <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
         <br>
         <form id="musicForm" onsubmit="event.preventDefault(); registerMusic();">
             <div class="form-group">
-                <label for="seller">Seller</label>
-                <input type="text" id="seller" name="seller" readonly>
+                <input type="text" id="seller" name="seller" readonly hidden>
             </div>
             <div class="form-group">
                 <label for="title">Title</label>
