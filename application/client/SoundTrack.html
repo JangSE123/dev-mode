@@ -144,6 +144,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+
     <script>
         let userData = {};
 
@@ -162,6 +165,7 @@
                         point: data.point,
                         items: data.items
                     };
+                    document.querySelector('input[ng-model="buyMusic.buyer"]').value = userData.name;
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -187,7 +191,7 @@
                             </div>
                             <div class="price">
                                 <span>음원가격: ${track.price}원</span>
-                                <button data-title="${track.title}" data-seller="${track.seller}" data-price="${track.price}">선택</button>
+                                <button data-title="${track.title}" data-seller="${track.seller}" data-price="${track.price}">구매</button>
                             </div>
                         `;
 
@@ -201,16 +205,56 @@
                             const seller = this.getAttribute('data-seller');
                             const price = this.getAttribute('data-price');
 
-                            fetch(`/buymusic?buyer=${userData.name}&seller=${seller}&musicName=${title}`, {
-                                method: 'GET'
+                            Swal.fire({
+                                title: '구매 확인',
+                                html: `
+                                    <p><strong>곡명:</strong> ${title}</p>
+                                    <p><strong>판매자:</strong> ${seller}</p>
+                                    <p><strong>가격:</strong> ${price}원</p>
+                                    <p>정말 구매하시겠습니까?</p>
+                                `,
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: '예',
+                                cancelButtonText: '아니오'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetch(`/buymusic?buyer=${userData.name}&seller=${seller}&musicName=${title}`, {
+                                        method: 'GET'
+                                    })
+                                        .then(response => {
+                                            if (response.ok) {
+                                                Swal.fire('구매 완료', '구매가 완료되었습니다.', 'success');
+                                                return fetch('/buymusic', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ title: title })
+                                                });
+                                            } else {
+                                                throw new Error('Purchase failed');
+                                            }
+                                        })
+                                        .then(() => {
+                                            fetch(`/query?name=${encodeURIComponent(userData.name)}`, {
+                                                method: 'GET'
+                                            })
+                                                .then(response => response.json())
+                                                .then(updatedUserData => {
+                                                    // userData 업데이트
+                                                    userData = updatedUserData;
+                                                    // 페이지 새로고침
+                                                    location.reload();
+                                                });
+                                        }).catch(error => {
+                                            Swal.fire('오류', '구매 중 오류가 발생하였습니다.', 'error');
+                                        });
+                                } else {
+                                    Swal.fire('구매 취소', '구매가 취소되었습니다.', 'info');
+                                }
                             });
-                            fetch('/buymusic', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ title: title })
-                            })
+
 
                             document.querySelector('input[ng-model="buyMusic.sellerItem"]').value = title;
                             document.querySelector('input[ng-model="buyMusic.seller"]').value = seller;
@@ -248,15 +292,15 @@
     <div class="content">
         <h1>Soundtrack</h1>
         <!-- Tracks will be dynamically inserted here -->
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label>Buying Music</label>
             <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{buyMusic}}</h5>
             <br>
-            Buyer: <input class="form-control" type="text" ng-model="buyMusic.buyer" value=userData.name>
+            <input class="form-control" type="text" ng-model="buyMusic.buyer" value=userData.name hidden>
             Seller: <input class="form-control" type="text" ng-model="buyMusic.seller">
             Music: <input class="form-control" type="text" ng-model="buyMusic.sellerItem">
             <input id="buyMusic" type="submit" value="구매하기" class="btn btn-primary" ng-click="buyMusic()">
-        </div>
+        </div> -->
     </div>
 
     <div class="footer">
