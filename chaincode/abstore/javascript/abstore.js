@@ -227,7 +227,7 @@ const ABstore = class {
     }
 
     // Ensure seller has enough value to deduct the fee
-    let fee = price * 0.02;
+    let fee = Math.floor(price * 0.02);
     if (sellerPoint + sellerCash < fee) {
         throw new Error('seller does not have enough value to pay the fee');
     }
