@@ -224,7 +224,15 @@
                                     })
                                         .then(response => {
                                             if (response.ok) {
-                                                Swal.fire('구매 완료', '구매가 완료되었습니다.', 'success');
+                                                Swal.fire({
+                                                    title: '구매 완료',
+                                                    text: '구매가 완료되었습니다.',
+                                                    icon: 'success',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                }).then(()=>{
+                                                    location.reload();
+                                                })
                                                 return fetch('/buymusic', {
                                                     method: 'POST',
                                                     headers: {
@@ -245,7 +253,6 @@
                                                     // userData 업데이트
                                                     userData = updatedUserData;
                                                     // 페이지 새로고침
-                                                    location.reload();
                                                 });
                                         }).catch(error => {
                                             Swal.fire('오류', '구매 중 오류가 발생하였습니다.', 'error');
