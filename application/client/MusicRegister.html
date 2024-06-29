@@ -1,117 +1,147 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Register</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-   <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #fff;
-        color: #333;
-    }
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+        }
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        background-color: #f8f8f8;
-        border-bottom: 1px solid #ddd;
-    }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .header a {
-        text-decoration: none;
-        color: #000;
-        margin: 0 15px;
-        font-size: 16px;
-    }
-    .header nav a {
-        margin: 0 15px;
-        text-decoration: none;
-        color: black;
-        font-weight: bold;
-    }
+        .header a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 15px;
+            font-size: 16px;
+        }
 
-    .header .sign-in {
-        background-color: #f8f8f8;
-        border: 1px solid #ccc;
-        padding: 5px 15px;
-        border-radius: 20px;
-        text-decoration: none;
-        font-size: 16px;
-    }
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
 
-    .form-container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: #f8f8f8;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .header .sign-in {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
 
-    .form-container h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 24px;
-        color: #333;
-    }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f8f8f8;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
 
 
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
 
-    .form-group input, .form-group textarea {
-        width: 95%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-        color: #333;
-    }
+        .form-group input,
+        .form-group textarea {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+        }
 
-    .form-group textarea {
-        resize: vertical;
-    }
+        .form-group textarea {
+            resize: vertical;
+        }
 
-    .musicRegister {
-        width: 99%;
-        padding: 10px;
-        background-color: #337ab7;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top:10px;
-    }
+        .musicRegister {
+            width: 99%;
+            padding: 10px;
+            background-color: #337ab7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
 
-    .musicRegister:hover {
-        background-color: #286090;
-    }
+        .musicRegister:hover {
+            background-color: #286090;
+        }
 
-    .footer {
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        padding: 20px;
-        margin-top: 20px;
-    }
-</style>
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
 
 
     <script>
+        let userData = {};
+
+        function loadSessionData() {
+            fetch('/session')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No session data found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    userData = {
+                        name: data.walletID,
+                        cash: data.cash,
+                        point: data.point,
+                        items: data.items
+                    };
+                    document.getElementById('seller').value = userData.name; // Set seller input value
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        window.onload = loadSessionData;
+
+
         function registerMusic() {
             const title = document.getElementById('title').value;
             const seller = document.getElementById('seller').value;
@@ -119,17 +149,35 @@
             const price = document.getElementById('price').value;
 
             if (title && seller && description && price) {
-                let musicList = JSON.parse(localStorage.getItem('musicList')) || [];
-                musicList.push({ title, seller, description, price });
-                localStorage.setItem('musicList', JSON.stringify(musicList));
-                alert('Music registered successfully!');
-                document.getElementById('musicForm').reset();
+                fetch('/musiclist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, seller, description, price })
+                })
+                fetch(`/musicregister?seller=${encodeURIComponent(seller)}&music=${encodeURIComponent(title)}&price=${encodeURIComponent(price)}`,{
+                    method:'GET'
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Music registered successfully!');
+                        document.getElementById('musicForm').reset();
+                    } else {
+                        alert('Failed to register music');
+                    }
+                })
+                    .catch(error => {
+                        console.error('Error registering music:', error);
+                        alert('Error registering music');
+                    });
             } else {
                 alert('Please fill in all fields.');
             }
         }
     </script>
+
 </head>
+
 <body ng-app="application" ng-controller="AppCtrl">
     <div class="header">
         <div class="logo">C</div>
@@ -146,28 +194,30 @@
         <h5 style="color:green;margin-bottom:2%" id="success_musicRegister">{{musicRegister}}</h5>
         <br>
         <form id="musicForm" onsubmit="event.preventDefault(); registerMusic();">
-        <div class="form-group">
-            <label for="seller">Seller</label>
-            <input type="text" id="seller" name="seller" ng-model="musicRegister.seller" required>
-        </div>
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" ng-model="musicRegister.music" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" id="price" name="price" ng-model="musicRegister.price" required>
-        </div>
-        <input id="musicRegister" type="submit" value="Send" class="musicRegister" ng-click="musicRegister()">
-    </form>  
+            <div class="form-group">
+                <label for="seller">Seller</label>
+                <input type="text" id="seller" name="seller"readonly>
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="text" id="price" name="price" required>
+            </div>
+            <input id="musicRegister" type="submit" value="Send" class="musicRegister"
+                ng-click="musicRegister()">
+        </form>
     </div>
     <div class="footer">
         Company Name | Company .2022 © All Rights Reserved
     </div>
 </body>
 <script type="text/javascript" src="app.js"> </script>
+
 </html>

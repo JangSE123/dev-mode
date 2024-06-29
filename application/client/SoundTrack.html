@@ -134,29 +134,34 @@
     </style>
     <script>
         window.onload = function() {
-            const musicList = JSON.parse(localStorage.getItem('musicList')) || [];
-            const contentDiv = document.querySelector('.content');
+            fetch('/musiclist')
+                .then(response => response.json())
+                .then(musicList => {
+                    const contentDiv = document.querySelector('.content');
 
-            musicList.forEach(track => {
-                const trackDiv = document.createElement('div');
-                trackDiv.className = 'track';
+                    musicList.forEach(track => {
+                        const trackDiv = document.createElement('div');
+                        trackDiv.className = 'track';
 
-                trackDiv.innerHTML = `
-                    <div class="track-info">
-                        <h2>${track.title}</h2>
-                        <p>판매자: ${track.seller}</p>
-                        <p>음원 설명: ${track.description}</p>
-                    </div>
-                    <div class="price">
-                        <span>음원가격: ${track.price}원</span>
-                        <button>구매</button>
-                    </div>
-                `;
+                        trackDiv.innerHTML = `
+                            <div class="track-info">
+                                <h2>${track.title}</h2>
+                                <p>판매자: ${track.seller}</p>
+                                <p>음원 설명: ${track.description}</p>
+                            </div>
+                            <div class="price">
+                                <span>음원가격: ${track.price}원</span>
+                                <button>구매</button>
+                            </div>
+                        `;
 
-                contentDiv.appendChild(trackDiv);
-            });
+                        contentDiv.appendChild(trackDiv);
+                    });
+                })
+                .catch(error => console.error('Error fetching music list:', error));
         };
     </script>
+
 </head>
 <body>
     <div class="header">

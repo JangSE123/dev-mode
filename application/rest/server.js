@@ -18,6 +18,13 @@ app.use(session({
    cookie: { secure: false } // HTTPS를 사용하는 경우 true로 설정하세요.
 }));
 
+// 음악 리스트를 저장할 변수
+let musicList = [
+   { title: 'Song 1', seller: 'admin', description: 'TEST SONG 1', price: 1000 },
+   { title: 'Song 2', seller: 'admin', description: 'TEST SONG 2', price: 2000 },
+   // 초기 음악 리스트 데이터
+];
+
 app.get('/init', function (req, res) {
    let user = req.query.user;
    let cash = 0;
@@ -88,6 +95,24 @@ app.get('/musicregister', function (req, res) {
    let price = req.query.price;
    let args = [seller, music, price];
    sdk.send(false, 'musicRegister', args, res);
+});
+
+app.get('/musiclist', async function (req, res) {
+      res.json(musicList);
+});
+
+// 음악 등록 엔드포인트
+app.post('/musiclist', function (req, res) {
+   const { title, seller, description, price } = req.body;
+
+   if (!title || !seller || !description || !price) {
+      res.status(400).send('All fields are required');
+      return;
+   }
+
+   const newMusic = { title, seller, description, price };
+   musicList.push(newMusic);
+   res.status(201).send('Music registered successfully');
 });
 
 app.get('/buymusic', function (req, res) {
