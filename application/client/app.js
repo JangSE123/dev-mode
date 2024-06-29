@@ -17,9 +17,6 @@ app.controller('AppCtrl', function ($scope, appFactory) {
             if (data == "")
                 $scope.init_ab = "success";
             $("#success_init").show();
-            setTimeout(function() {
-                window.location.href = 'Login.html';
-            });
         });
     }
     $scope.transferAB = function () {
