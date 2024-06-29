@@ -7,6 +7,19 @@
     <title>Soundtrack</title>
 
     <style>
+
+        @font-face {
+            font-family: 'MoveSans-Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/MoveSans-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Cafe24SsurroundAir';
+            src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
         .box-wrap {
             position: relative;
             width: 100%;
@@ -24,7 +37,7 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Cafe24SsurroundAir';
             margin: 0;
             padding: 0;
             background-color: #fff;
@@ -33,30 +46,40 @@
 
         .header {
             display: flex;
+            font-family: 'MoveSans-Bold';
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
-            background-color: #f8f8f8;
+            background: linear-gradient(90deg, #FFC1CC, #B3D4FF);
             border-bottom: 1px solid #ddd;
+            height: 50px;
+            /* 헤더 높이를 고정값으로 설정 */
         }
 
-        .header a {
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header .menu {
+            display: flex;
+            gap: 50px;
+            height: 80%;
+            /* 부모 높이의 80% */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+        }
+
+        .header .menu a {
+            font-size: large;
             text-decoration: none;
             color: #000;
+            transition: color ease-in-out 0.2s;
             margin: 0 15px;
-            font-size: 16px;
         }
 
-        .header img {
-            width: 50px;
-            height: 50px;
-        }
-
-        .header nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
+        .header .menu a:hover {
+            color: #fff;
         }
 
         .header .sign-in {
@@ -66,6 +89,13 @@
             border-radius: 20px;
             text-decoration: none;
             font-size: 16px;
+            transition: background-color ease-in-out 0.3s;
+        }
+        .header .sign-in:visited {
+            color: black;
+        }
+        .header .sign-in:hover {
+            background-color: #ddd;
         }
 
         .content {
@@ -143,6 +173,7 @@
             position: absolute;
             bottom: 0;
         }
+
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
